@@ -10,23 +10,14 @@ class Bouton
 {
 public:
 
-Bouton();
-~Bouton();
-bool appuiBouton(uint8_t pinBouton)
+Bouton()
 {
+    DDRB= 0xff; 
+    DDRD = 0x00;
+};
+~Bouton();
 
-    const uint8_t DELAIS_ANTIREBOND = 10;
-
-    if (PIND & (1 << pinBouton))
-    {
-        _delay_ms(DELAIS_ANTIREBOND);
-        if (PIND & (1 << pinBouton))
-        { // traitement de l'anti-rebond dans la fonction.
-            return true;
-        }
-        return false;
-    }
-}
+bool appuiBouton(uint8_t pinBouton);
 
 
 private:
