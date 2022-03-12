@@ -1,0 +1,15 @@
+//Pour inclure les variables, fonctions et methodes dans le fichier
+//Facilite le Debug.
+#include 'bouton.cpp'
+#include 'bouton.h'
+#include 'can.cpp'
+#include 'can.h'
+#include 'DEL.cpp'
+#include 'DEL.h'
+#include 'memoire_24.h'
+#include 'memoire_24.cpp'
+#include 'Moteur.cpp'
+#include 'Moteur.h'
+#include 'print.cpp'
+#include 'print.h'
+#include 'testmoteur.cpp'
