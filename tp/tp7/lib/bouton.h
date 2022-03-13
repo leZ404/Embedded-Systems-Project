@@ -8,19 +8,13 @@
 class Bouton
 {
 public:
+    Bouton()
+    {
+        DDRB |= 0xff;
+        DDRD |= 0x00;
+    };
+    ~Bouton();
 
-Bouton()
-{
-    DDRB|= 0xff;     
-    DDRD|=0x00;
-};
-~Bouton();
-
-bool appuiBouton(uint8_t pinBouton);
-
-
-private:
-
+    bool appuiBouton(uint8_t pinBouton);
 
 };
-

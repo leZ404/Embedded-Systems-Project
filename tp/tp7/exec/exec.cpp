@@ -1,3 +1,10 @@
+/*
+Travail : TRAVAIL_PRATIQUE 7
+Section # : 02
+Équipe # : EQUIPE_NO 3544
+Auteurs : Ryan Lahbabi , Zied Kaabi, Ashveer Golam, Omar Bamrim 
+Correcteur : Carl 
+*/
 
 #define F_CPU 8000000UL
 #include <avr/io.h>
@@ -15,6 +22,7 @@
 
 int main()         
 {
+  const uint8_t DELAIS_PWM = 5000;
   DDRB |= 0xff;
   DDRD |= 0x00;
   
@@ -34,25 +42,25 @@ while(true)
     //test moteur ( on fait tourner la roue droite puis roue gauche puis les 2 ensemble au rythme de 50% et en fin stop)
      Moteur moteur(PB5,PB6);
     moteur.ajustementPwmNavigation(50,0);
-   _delay_ms(5000);
+   _delay_ms(DELAIS_PWM);
     moteur.ajustementPwmNavigation(0,50);
-      _delay_ms(5000);
+      _delay_ms(DELAIS_PWM);
     moteur.ajustementPwmNavigation(50,50);
-    _delay_ms(5000);
+    _delay_ms(DELAIS_PWM);
      moteur.ajustementPwmNavigation(0,0);
       moteur.avancer();    // moteur avance a 100%
-    _delay_ms(5000);
+    _delay_ms(DELAIS_PWM);
       moteur.reculer();  // moteur recule a 100%
-      _delay_ms(5000);
+      _delay_ms(DELAIS_PWM);
 
     //test LED 
      Del led; 
     led.clignoter(10,LUMIERE_VERTE);       
     led.clignoter(10,LUMIERE_ROUGE);
     led.SetCouleurLumiere(Etat::VERT);      // allumer del en vert pendant 5 sec 
-    _delay_ms(5000);
+    _delay_ms(DELAIS_PWM);
      led.SetCouleurLumiere(Etat::ROUGE);     // allumer del en rouge pendant 5 sec 
-        _delay_ms(5000);
+        _delay_ms(DELAIS_PWM);
 
 
 }
