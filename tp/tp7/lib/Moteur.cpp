@@ -1,5 +1,4 @@
-#define F_CPU 8000000UL
-#define MAX_PWM 255 
+#define F_CPU 8000000UL 
 #include <avr/io.h>
 #include <util/delay.h>
 #include<stdio.h>
@@ -9,11 +8,15 @@
 //uint8_t  Moteur::sVariable = X;  
 // OC0A - pb 3 roue gauche pin direction pb2 
 // OC0B - pb 4 roue droite pin direction 
+const  uint8_t  MAX_PWM = 255;       // c est plus correcte de la declarer comme cst que comme DEFINE 
 
-Moteur::Moteur(uint8_t pinDirectionDroite , uint8_t pinDirectionGauche):
-_directionDroite(pinDirectionDroite),_directionGauche(pinDirectionGauche){}
-  DDRB =| (1 << _directionDroite) | (1 << _directionGauche)
+Moteur::Moteur(uint8_t pinDirectionDroite , uint8_t pinDirectionGauche)
+:_directionDroite(pinDirectionDroite),_directionGauche(pinDirectionGauche)
+{
+  DDRB |= (1 << _directionDroite) | (1 << _directionGauche)
     | (1 << PB3) | (1 << PB4);
+}
+
     
 
 
@@ -50,11 +53,11 @@ void Moteur::stop()
 void Moteur::ajustementPwmNavigation (uint8_t pourcentageRoueDroite , uint8_t pourcentageRoueGauche) 
 {
 
-OCR0A = pourcentageRoueDroite * MAX_PWM / 100;       // peut on conserver le 100 comme chiffre magique 
-OCR0B = pourcentageRoueGauche * MAX_PWM / 100;
+OCR0A =  pourcentageRoueDroite * MAX_PWM / 100;       // peut on conserver le 100 comme chiffre magique 
+OCR0B =  pourcentageRoueGauche * MAX_PWM / 100;
 
 TCNT0 = 0;
- TCCR0A = (1 << WGM00) | (1 << WGM01) | (1 << COM0A1);
+ TCCR0A = (1 << WGM00) | (1 << COM0A1) | (1 << COM0B1)  ;
  TCCR0B = (1 << CS01);
    
 };

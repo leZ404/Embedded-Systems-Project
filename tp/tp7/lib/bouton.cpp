@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <string>
 #include <bouton.h>
 bool Bouton::appuiBouton(uint8_t pinBouton)
 {

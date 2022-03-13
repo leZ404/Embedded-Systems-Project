@@ -30,11 +30,12 @@ void stop();
 
 void ajustementPwmNavigation ( uint8_t pourcentageDroite , uint8_t dureeRoueGauche); 
 
-void tourner();
+void tournerDroite(uint8_t delay);
+void tournerGauche(uint8_t delay);
 
 private:
 
-uint8_t _directioDroite; 
+uint8_t _directionDroite; 
 uint8_t _directionGauche; 
 
 //uint8_t _frequence; // inverse de la frequence du moteur

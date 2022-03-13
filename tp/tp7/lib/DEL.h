@@ -3,10 +3,16 @@
 #include <util/delay.h>
 #include<stdio.h>
 #include<stdlib.h>
-#include<string>
 
 
 //class Del pour PORTB 
+
+
+const uint8_t LUMIERE_ETEINTE = 0x00;
+
+const uint8_t LUMIERE_ROUGE = (1 << PB1);
+
+const uint8_t LUMIERE_VERTE = (1 << PB0);
 
 
 enum class Etat
@@ -30,13 +36,10 @@ public:
 
 // clignoter aqu rythme de 2 fois par secondes 
 
-void clignoter( uint8_t nbFois,  int Couleurlumiere);
+void clignoter( uint8_t nbFois, const uint8_t Couleurlumiere);
 
 
 
 private: 
-int _Couleurlumiere; 
- 
-
 
 };    
