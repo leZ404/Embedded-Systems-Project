@@ -7,12 +7,18 @@
 class Print
 {
 public:
-    Print();
-    ~Print();
-    void USART_Init(const int baud);
-    void afficherCaractere(unsigned char donnees);
-    void afficherChaineCaractere(const char *donnees, int longueur);
-    void afficherChaineCaractere2(const char *donnees);
+    Print();  // constructeur 
+   // ~Print(); / ne pas commenter les destructeurs non implementes ne fait pas fonctionner les test (erreur au niveau du make)
+   
+   // initialisation de USART
+ void USART_Init(const int baud);
+
+    // fonction pour afficher un caractere 
+    void afficherCaractere( const char donnees);
+
+// fonction qui utilise la fonction precedente pour afficher une chaine de caractere 
+
+    void afficherChaineCaractere(const char *donnees);
 
 
 };

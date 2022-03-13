@@ -13,7 +13,7 @@ public:
         DDRB |= 0xff;
         DDRD |= 0x00;
     };
-    ~Bouton();
+    //~Bouton();
 
     bool appuiBouton(uint8_t pinBouton);
 

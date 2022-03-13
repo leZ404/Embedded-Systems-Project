@@ -5,10 +5,13 @@
 #include <stdlib.h>
 #include <print.h>
 
-Print::Print()
+
+Print::Print()      // constructeur 
 {
     // *(this).USART_Init();
 }
+
+
 
 void Print::USART_Init(const int baud)
 {
@@ -21,24 +24,18 @@ void Print::USART_Init(const int baud)
     UCSR0C = (1 << USBS0) | (3 << UCSZ00);
 }
 
-void Print::afficherCaractere(unsigned char donnees)
+void Print::afficherCaractere( const char donnees)
 {
     /* Wait for empty transmit buffer */
     while (!(UCSR0A & (1 << UDRE0)))
         ;
     /* Put data into buffer, sends the data */
     UDR0 = donnees;
-}
-/*
-void Print::afficherChaineCaractere( const char* data, int length)
-{
-    for (uint8_t  i = 0 ; i < length ; i++)
-    {
-        afficherCaractere(data[i]);
-    };
-}*/
 
-void Print::afficherChaineCaractere2(const char *donnees)
+}
+
+
+void Print::afficherChaineCaractere(const char *donnees)
 {
     uint8_t index = 0;
     while (donnees[index] != '\0')

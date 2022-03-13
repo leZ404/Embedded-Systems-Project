@@ -6,11 +6,13 @@
 
 //class Del pour PORTB
 
+
 const uint8_t LUMIERE_ETEINTE = 0x00;
-
 const uint8_t LUMIERE_ROUGE = (1 << PB1);
-
 const uint8_t LUMIERE_VERTE = (1 << PB0);
+
+
+// differents etats d'une Led
 
 enum class Etat
 {
@@ -22,15 +24,15 @@ enum class Etat
 class Del
 {
 public:
-    Del();
-    //~Del();
+    Del();     // constructeur 
+  //~Del();     // ne pas commenter les destructeurs non implementes ne fait pas fonctionner les test (erreur au niveau du make)
 
-    // eteindre ou allumer la Del selon une couleur definie
+ // eteindre ou allumer la Del selon un etat bien defini
     void SetCouleurLumiere(Etat etat);
 
-    // clignoter aqu rythme de 2 fois par secondes
+// clignoter au rythme de 2 fois par secondes
 
     void clignoter(uint8_t nbFois, const uint8_t Couleurlumiere);
 
-private:
+
 };

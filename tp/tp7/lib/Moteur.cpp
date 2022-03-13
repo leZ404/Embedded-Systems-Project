@@ -6,10 +6,8 @@
 #include <Moteur.h>
 
 //uint8_t  Moteur::sVariable = X;
-// OC0A - pb 3 roue gauche pin direction pb2
-// OC0B - pb 4 roue droite pin direction
-const uint8_t MAX_PWM = 255; // c est plus correcte de la declarer comme cst que comme DEFINE
 
+const uint8_t MAX_PWM = 255; // valeur maximale qu'un registre peut avoir
 Moteur::Moteur(uint8_t pinDirectionDroite, uint8_t pinDirectionGauche)
     : _directionDroite(pinDirectionDroite), _directionGauche(pinDirectionGauche)
 {
@@ -25,7 +23,7 @@ void Moteur::avancer()
     PORTB &= ~(1 << _directionGauche);
 };
 
-// E=1 / D = 0
+
 
 void Moteur::reculer()
 {
@@ -35,7 +33,7 @@ void Moteur::reculer()
     PORTB |= (1 << _directionGauche);
 };
 
-// E = 0 / D= X
+
 void Moteur::arret()
 {
     OCR0A = 0;
@@ -45,10 +43,11 @@ void Moteur::arret()
 void Moteur::ajustementPwmNavigation(uint8_t pourcentageRoueDroite, uint8_t pourcentageRoueGauche)
 {
 
-    OCR0A = pourcentageRoueDroite * MAX_PWM / 100; // peut on conserver le 100 comme chiffre magique
+    OCR0A = pourcentageRoueDroite * MAX_PWM / 100; // comme on procede en pourcentage on devrait diviser par 100 vu que OCR0X= 255 est un rendement de 100%
     OCR0B = pourcentageRoueGauche * MAX_PWM / 100;
 
     TCNT0 = 0;
     TCCR0A = (1 << WGM00) | (1 << COM0A1) | (1 << COM0B1);
     TCCR0B = (1 << CS01);
 };
+

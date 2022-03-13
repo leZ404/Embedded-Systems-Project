@@ -10,27 +10,25 @@
 class Moteur
 {
 public:
-    Moteur(uint8_t pinDirectionDroite, uint8_t pinDirectionGauche);
-    //  ~Moteur();
+    Moteur(uint8_t pinDirectionDroite, uint8_t pinDirectionGauche); // constructeur 
+    //  ~Moteur();     // ne pas commenter les destructeurs non implementes ne fait pas fonctionner les test (erreur au niveau du make)
 
-    // config pont H : E=1 / D = 1
+    // avancer les 2 roues avec vitesse MAX
     void avancer();
 
     // E=1 / D = 0
-
+    // reculer le 2 roues avec vitesse MAX  
     void reculer();
 
-    // E = 0 / D= X
+    // arreter les roues
     void arret();
 
-    //vitesse du moteur
-    //void setVitesse(uint8_t dureeRoueDroite ,uint8_t dureeRoueGauche );
 
+    // fonction pour ajuster le pwm selon des pourcentages (celui de droite est independant de celui de gauche) 
     void ajustementPwmNavigation(uint8_t pourcentageDroite, uint8_t dureeRoueGauche);
 
 private:
-    uint8_t _directionDroite;
-    uint8_t _directionGauche;
+    uint8_t _directionDroite;      // pin de direction roue droite 
+    uint8_t _directionGauche;     // pin de direction roue gauche
 
-    //uint8_t _frequence; // inverse de la frequence du moteur
 };

@@ -29,7 +29,7 @@ PROJECTNAME= executable
 # Utilisez le suffixe .cpp pour les fichiers C++
 # Listez tous les fichiers a compiler, separes par
 # un espace. exemple: 'tp1.c tp2.cpp':
-PRJSRC= exec.cpp
+PRJSRC= exec.cpp debug.cpp
 
 # Inclusions additionnels (ex: -I/path/to/mydir)
 INC=-I../lib
@@ -70,6 +70,8 @@ AVRDUDE=avrdude
 REMOVE=rm -f
 # HEXFORMAT -- format pour les fichiers produient .hex
 HEXFORMAT=ihex
+
+
 
 
 
