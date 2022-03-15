@@ -1,0 +1,31 @@
+﻿
+
+dbt;
+
+dal 1;
+mav 150;
+sgo 54;
+att 100;
+sar;
+
+mre;
+att 100;
+det 1;
+mar;
+
+dbc;  //boucle
+trg;
+att 200;
+mar;
+trd 150;
+att 200;
+fbc;
+
+sgo 25;
+att 150;
+fin;
+
+
+
+
+
