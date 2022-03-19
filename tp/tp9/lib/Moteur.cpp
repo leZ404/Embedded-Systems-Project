@@ -14,25 +14,23 @@ Moteur::Moteur(uint8_t pinDirectionDroite, uint8_t pinDirectionGauche)
     DDRB |= (1 << _directionDroite) | (1 << _directionGauche) | (1 << PB3) | (1 << PB4);
 }
 
-void Moteur::avancer()
-
+void Moteur::avancer(uint8_t valPWM) // Prend la valeur PWM 
 {
-    OCR0A = MAX_PWM;
-    OCR0B = MAX_PWM;
+    OCR0A = valPWM; //0-255
+    OCR0B = valPWM; //0-255
     PORTB &= ~(1 << _directionDroite);
     PORTB &= ~(1 << _directionGauche);
 };
 
 
 
-void Moteur::reculer()
+void Moteur::reculer(uint8_t valPWM)  // Prend la valeur PWM
 {
-    OCR0A = MAX_PWM;
-    OCR0B = MAX_PWM;
+    OCR0A = valPWM; //0-255
+    OCR0B = valPWM; //0-255
     PORTB |= (1 << _directionDroite);
     PORTB |= (1 << _directionGauche);
 };
-
 
 void Moteur::arret()
 {

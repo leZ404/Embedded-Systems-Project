@@ -14,11 +14,11 @@ public:
     //  ~Moteur();     // ne pas commenter les destructeurs non implementes ne fait pas fonctionner les test (erreur au niveau du make)
 
     // avancer les 2 roues avec vitesse MAX
-    void avancer();
+    void avancer(uint8_t valPWM);
 
     // E=1 / D = 0
     // reculer le 2 roues avec vitesse MAX  
-    void reculer();
+    void reculer(uint8_t valPWM);
 
     // arreter les roues
     void arret();

@@ -21,4 +21,8 @@ public:
     void afficherChaineCaractere(const char *donnees);
 
 
+unsigned char USART_Receive( void );
+
+
+
 };
