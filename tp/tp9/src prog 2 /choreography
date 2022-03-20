@@ -1,0 +1,26 @@
+dbt;         //debut programme
+
+dal 1;      // allumer la  del (faut verifier le 1)
+mav 150;    // avancer le robot avec un pwm de 60,78 %
+sgo 54;     // jouer sonorite a 180 Hz
+att 100;    // attendre pendant 2.5 sec 
+sar;        // arrêter de jouer la sonorite
+
+mre 150 ;   // reculer le robot avec un pwm de 60,78 %
+att 100;    // attendre pendant 2.5 sec 
+det 1;      // eteindre la del 
+mar;        //arrêter roues moteur 
+
+dbc;        //boucle
+trg;        // tourner a gauche
+att 200;    // attendre pendant 5 sec
+mar;        //arrêter roues moteur
+trd;        // tourner a droite 
+att 200;    // attendre pendant 5 sec
+fbc;        // fin boucle 
+
+sgo 27;      // jouer sonorite a 90 Hz
+dal 1;       // allumer la  del
+att 100;     // attendre pendant  2.5 sec
+det 1;       //   eteindre la del
+fin;         // fin programme

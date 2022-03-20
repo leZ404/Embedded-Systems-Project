@@ -3,12 +3,13 @@
 #include <util/delay.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <memoire_24.h>
 
 class Print
 {
 public:
     Print();  // constructeur 
-   // ~Print(); / ne pas commenter les destructeurs non implementes ne fait pas fonctionner les test (erreur au niveau du make)
+   //~Print(); // ne pas commenter les destructeurs non implementes ne fait pas fonctionner les test (erreur au niveau du make)
    
    // initialisation de USART
  void USART_Init();
@@ -23,5 +24,6 @@ public:
 
 unsigned char USART_Receive( void );
 
+void USART_Transmit( unsigned char data );
 
 };
