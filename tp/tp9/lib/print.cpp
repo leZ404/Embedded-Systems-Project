@@ -12,8 +12,6 @@ Print::Print()      // constructeur
 }
 
 
-
-
 void Print::USART_Init()
 {
     
@@ -61,7 +59,7 @@ return UDR0;
 
 
 
-void USART_Transmit( unsigned char data )
+void Print::USART_Transmit( unsigned char data )
 {
 /* Wait for empty transmit buffer */
 while ( !( UCSR0A & (1<<UDRE0)) )
