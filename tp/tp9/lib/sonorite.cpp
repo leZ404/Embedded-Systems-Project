@@ -28,7 +28,7 @@ void Sonorite::jouerNote(uint8_t note) {
     index = note - MIN; //Si note = 45, et MIN = 45, l'index sera a 0 et ainsi de suite
     //TableFrequence modifier pour arrondir les valeurs
     const uint16_t tableFrequence[] = { 110, 117, 123, 132, 139, 147, 156, 165,
-                                        175, 185, 196, 20765, 220, 233, 247, 262,
+                                        175, 185, 196, 208, 220, 233, 247, 262,
                                         277, 294, 311, 330, 349, 370, 392, 415,
                                         440, 466, 494, 523, 554, 587, 622, 659,
                                         698, 740, 784, 831, 880 };
@@ -50,3 +50,4 @@ void Sonorite::arret() {
     TCCR1B = 0;  // Mode CTC (suggerer par le tp9)
     TCCR1C = 0;
 }
+
