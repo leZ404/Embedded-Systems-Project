@@ -47,11 +47,10 @@ void Print::afficherChaineCaractere(const char *donnees)
 
 
 
-unsigned char Print::USART_Receive( void )
+uint8_t Print::USART_Receive( )
 {
 
-while ( !( (UCSR0A) & (1<<RXC0)) )
-;
+while ( !( (UCSR0A) & (1<<RXC0)) );
 
 return UDR0;
 }
@@ -59,11 +58,10 @@ return UDR0;
 
 
 
-void Print::USART_Transmit( unsigned char data )
+void Print::USART_Transmit( uint8_t data )
 {
 /* Wait for empty transmit buffer */
-while ( !( UCSR0A & (1<<UDRE0)) )
-;
+while ( !( UCSR0A & (1<<UDRE0)) );
 /* Put data into buffer, sends the data */
 UDR0 = data;
 }

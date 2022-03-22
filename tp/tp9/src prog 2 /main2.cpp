@@ -1,4 +1,15 @@
 /*
+Travail : TRAVAIL_PRATIQUE 9
+Section # : 02
+Équipe # : EQUIPE_NO 3544
+Auteurs : Ryan Lahbabi , Zied Kaabi, Ashveer Golam, Omar Bamrim 
+Correcteur : Jerome Collin 
+
+Notre coregraphie ne fonctionne pas parfaitement malheureusement malgre que nos fonctions marchent toutes lorsqu on les testent individuellement
+et meme apres avoir essayer beaucoup de methodes, les charges non plus n'ont pas reussis a nous aider davantage.
+ Merci de votre comprehension.
+
+/*
 | Instruction binaire | mnémonique | Description                  |
 |---------------------|------------|------------------------------|
 | 0000 0001           | dbt        | début                        |
@@ -30,9 +41,9 @@
 #include <DEL.h>
 #include <sonorite.h>
 
-// referer les instructions a des adresses
+//referer les instructions a des adresses
 
-int addresseDebut = 0x00;
+uint8_t addresseInitiale = 0x00;
 const uint8_t DBT = 0x01;
 const uint8_t ATT = 0x02;
 const uint8_t DAL = 0x44;
@@ -52,169 +63,134 @@ const uint8_t FIN = 0xFF;
 int main()
 {
     DDRB = 0xff; // PORTB pour la sortie de la DEL et Moteur
-    DDRD= 0xff; // PORTD pour la sortie du son
+    DDRD= 0xff;  // PORTD pour la sortie du son
+
+    Memoire24CXXX m;
+    Print p;
     Del del;
-    
-      //m.ajustementPwmNavigation(100,100);
-    //_delay_ms(5000);
-  while(true)
-  {
-    del.SetCouleurLumiere(Etat::ROUGE);
-  //PORTA = (1 << PA0);
-   // m.reculer(250);   
-  //_delay_ms(5000);
-  del.SetCouleurLumiere(Etat::VERT);
- //PORTA = (1 << PA1);
-  }
-    //m.arret();
+    Moteur moteur(PB5, PB6);
+    Sonorite son;
 
-return 0;
+    // Appel des variables
+    uint8_t instruction;
+    uint8_t operande;
+    uint8_t iterations = 0;
+    uint8_t adresseParcours = 0x00;
+    bool debut  = false;
+    bool boucle = false;
+
+    // Lecture de la memoire sans executer les actions tant que DBT n'est pas detecte
+    while (instruction != DBT)
+    { // si ca ne marche pas on ajoute un delay
+        m.lecture(adresseParcours, &instruction);
+        _delay_ms(5);
+        adresseParcours++;
+        m.lecture(adresseParcours, &operande);
+        _delay_ms(5);
+        adresseParcours++;
+
+    }
+
+    // Routine de debut : clignoter la del 5 fois au rythme de 2 fois par sec (lumiere Verte)
+    
+    debut = true;
+    del.clignoter(5, LUMIERE_VERTE);
+    
+
+    while (debut == true)
+    {
+        m.lecture(adresseParcours, &instruction);
+        _delay_ms(5);
+        adresseParcours++;
+        m.lecture(adresseParcours, &operande);
+        _delay_ms(5);
+        adresseParcours++;
+       
+        
+   switch (instruction)
+        {
+            
+        case DAL:       //allumer Del en vert          
+            del.SetCouleurLumiere(Etat::ROUGE);
+            break;
+
+        case DET:       //eteindre la Del
+            del.SetCouleurLumiere(Etat::ETEINT);
+            _delay_ms(5000);
+            break;
+
+    
+        case SGO:       // jouer sonorite
+            if ( (operande < 45) || (operande > 81) )
+            {
+                adresseParcours++;
+                break;
+            }
+            son.jouerNote(operande);
+            _delay_ms(5000);
+            break;
+
+        case SAR:       //Arreter sonorite
+            son.arret();
+            _delay_ms(5000);
+            break;
+            
+        case MAR:       //Arreter le moteur
+            moteur.arret();
+            _delay_ms(5000);
+            break;
+
+        case MAR_AUTRE: //Arreter le moteur (2)
+            moteur.arret();
+            _delay_ms(5000);
+            break;
+
+        case MAV:     //Avancer le robot
+            moteur.avancer(operande);
+            break;
+
+        case MRE:    //Reculer le robot
+            moteur.reculer(operande);
+            break;
+
+        case TRD:    //Tourner a droite
+            moteur.ajustementPwmNavigation(50, 0);
+            break;
+
+        case TRG:    //Tourner a gauche
+            moteur.ajustementPwmNavigation(0, 50);
+            break;
+
+        case ATT:    //attendre pendant un certain temps ( op * 25 ms)
+       
+            for (int i = 0; i < operande; i++)
+                _delay_ms(25);
+            break;
+
+        case DBC:    // Debut de boucle avec op = nb d iterations 
+            debut = adresseParcours;
+            iterations = operande +1;
+            break;
+
+        case FBC:    //fin de boucle 
+            iterations--;
+            if (iterations > 0)
+            {
+                adresseParcours = debut;
+            }
+            else
+            {
+                boucle = false;
+            }
+            break;
+
+        case FIN:    //Fin du programme, mettre debut a false pour sortir du while
+
+            moteur.arret();
+            son.arret();
+            del.SetCouleurLumiere(Etat::ETEINT);
+            debut = false;
+            break;
+        }
+    }
 }
-
-//     Memoire24CXXX m;
-//     Print p;
-//     Del del;
-//     Moteur moteur(PB5, PB6);
-//     Sonorite son;
-
-//     // Appel des variables
-//     uint8_t *instruction;
-//     uint8_t *op;
-//     bool debut  = false;
-//     bool boucle = false;
-//     uint8_t *iterations = 0;
-//     uint8_t adresseParcours = addresseDebut + 2;
-
-//     // Lecture de la memoire sans executer les actions tant que DBT n'est pas detecte
-//     while (*instruction != DBT)
-//     { // si ca ne marche pas on ajoute un delay
-//         m.lecture(adresseParcours, instruction);
-//         _delay_ms(5);
-//         p.USART_Transmit(*instruction);
-//         _delay_ms(5);
-//         adresseParcours++;
-//     }
-
-//     // Routine de debut : clignoter la del 5 fois au rythme de 2 fois par sec (lumiere Verte)
-//     if (*instruction == DBT)
-//     {
-//         debut = true;
-//         del.clignoter(5, LUMIERE_VERTE);
-//     }
-
-//     while (debut == true)
-//     {
-//         m.lecture(adresseParcours, instruction);
-//         _delay_ms(5);
-//         p.USART_Transmit(*instruction);
-//         _delay_ms(5);
-//         adresseParcours++;
-//         // PORTB = (1<<PB1);
-//         // _delay_ms(300);
-//         switch (*instruction)
-//         {
-//         case DAL: //allumer Del en vert
-//             del.SetCouleurLumiere(Etat::ROUGE);
-//             break;
-
-//         case DET: //eteindre la Del
-//             del.SetCouleurLumiere(Etat::ETEINT);
-//             break;
-
-    
-//         case SGO: // jouer sonorite
-//             m.lecture(adresseParcours, op);
-//             if ( (*op < 45) || (*op > 81) )
-//             {
-//                 adresseParcours++;
-//                 break;
-//             }
-//             _delay_ms(5);
-//             p.USART_Transmit(*op);
-//             _delay_ms(5);         
-//             adresseParcours++;
-//             son.jouerNote(*op);
-//             break;
-
-//         case SAR: //Arreter sonorite
-//             son.arret();
-//             break;
-
-
-
-//         case MAR: //Arreter le moteur
-//             moteur.arret();
-//             break;
-
-//         case MAR_AUTRE: //Arreter le moteur (2)
-//             moteur.arret();
-//             break;
-
-//         case MAV: //Avancer le robot
-//             m.lecture(adresseParcours, op);
-//             _delay_ms(5);
-//             p.USART_Transmit(*op);
-//             _delay_ms(5);
-//             adresseParcours++;
-//             moteur.avancer(*op);
-//             break;
-
-//         case MRE: //Reculer le robot
-//             m.lecture(adresseParcours, op);
-//             _delay_ms(5);
-//             p.USART_Transmit(*op);
-//             _delay_ms(5);
-//             adresseParcours++;
-//             moteur.reculer(*op);
-//             break;
-
-//         case TRD: //Tourner a droite
-//             moteur.ajustementPwmNavigation(50, 0);
-//             break;
-
-//         case TRG: //Tourner a gauche
-//             moteur.ajustementPwmNavigation(0, 50);
-//             break;
-
-//         case ATT: //attendre pendant un certain temps ( op * 25 ms)
-//             m.lecture(adresseParcours, op);
-//             _delay_ms(5);
-//             p.USART_Transmit(*op);
-//             _delay_ms(5);
-//             adresseParcours++;
-//             for (int i = 0; i < *op; i++)
-//                 _delay_ms(25);
-//             break;
-
-//         case DBC:    // Debut de boucle avec op = nb d iterations 
-//             debut = adresseParcours;
-//             m.lecture(adresseParcours, op);
-//             _delay_ms(5);
-//             p.USART_Transmit(*op);
-//             _delay_ms(5);
-//             adresseParcours++;
-//             *iterations = *op +1;
-//             break;
-
-//         case FBC:    // fin de boucle 
-//             *iterations--;
-//             if (*iterations > 0)
-//             {
-//                 adresseParcours = debut;
-//             }
-//             else
-//             {
-//                 boucle = false;
-//             }
-//             break;
-
-//         case FIN: //Fin du programme, mettre debut a false pour sortir du while
-
-//             moteur.arret();
-//             son.arret();
-//             del.SetCouleurLumiere(Etat::ETEINT);
-//             debut = false;
-//             break;
-//         }
-//     }
-// }

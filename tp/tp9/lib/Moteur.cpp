@@ -13,25 +13,37 @@ Moteur::Moteur(uint8_t pinDirectionDroite, uint8_t pinDirectionGauche)
 {
     DDRB |= (1 << _directionDroite) | (1 << _directionGauche) | (1 << PB3) | (1 << PB4);
 }
-
 void Moteur::avancer(uint8_t valPWM) // Prend la valeur PWM 
 {
+    PORTB = 0;
+    PORTB = 0;
     OCR0A = valPWM; //0-255
     OCR0B = valPWM; //0-255
     PORTB &= ~(1 << _directionDroite);
     PORTB &= ~(1 << _directionGauche);
+
+    TCNT0 = 0;
+    TCCR0A = (1 << WGM00) | (1 << COM0A1) | (1 << COM0B1);
+    TCCR0B = (1 << CS01);
+  
 };
 
 
 
 void Moteur::reculer(uint8_t valPWM)  // Prend la valeur PWM
 {
+    PORTB = 0;
+    PORTB = 0;
     OCR0A = valPWM; //0-255
     OCR0B = valPWM; //0-255
-    PORTB |= (1 << _directionDroite);
-    PORTB |= (1 << _directionGauche);
-};
+    PORTB |= ~(1 << _directionDroite);
+    PORTB |= ~(1 << _directionGauche);
 
+    TCNT0 = 0;
+    TCCR0A = (1 << WGM00) | (1 << COM0A1) | (1 << COM0B1);
+    TCCR0B = (1 << CS01);
+    
+};
 void Moteur::arret()
 {
     OCR0A = 0;
@@ -48,4 +60,3 @@ void Moteur::ajustementPwmNavigation(uint8_t pourcentageRoueDroite, uint8_t pour
     TCCR0A = (1 << WGM00) | (1 << COM0A1) | (1 << COM0B1);
     TCCR0B = (1 << CS01);
 };
-
