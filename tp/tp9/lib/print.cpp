@@ -42,6 +42,7 @@ void Print::afficherChaineCaractere(const char *donnees)
     while (donnees[index] != '\0')
     {
         afficherCaractere(donnees[index]);
+        index++;
     }
 };
 

@@ -9,7 +9,7 @@ const uint8_t DELAIS_CLIGNOTER = 250;  // delai de 250 ms pour pouvir clignoter 
 
 Del::Del()
 {
-    //DDRB |= 0xff;
+    DDRC |= 0xff;
 }
 
 
@@ -18,15 +18,15 @@ void Del::SetCouleurLumiere(Etat etat)
 {
     if (etat == Etat::ETEINT)   
     {
-        PORTB = LUMIERE_ETEINTE;       
+        PORTC = LUMIERE_ETEINTE;       
     }
     else if (etat == Etat::VERT)
     {
-        PORTB = LUMIERE_VERTE;
+        PORTC = LUMIERE_VERTE;
     }
     else if (etat == Etat::ROUGE)
     {
-        PORTB = LUMIERE_ROUGE;
+        PORTC = LUMIERE_ROUGE;
     }
 }
 
@@ -34,9 +34,9 @@ void Del::clignoter(uint8_t nbFois, const uint8_t Couleurlumiere)
 {
     for (uint8_t i = 0; i < nbFois; i++)
     {
-        PORTB = Couleurlumiere;
+        PORTC = Couleurlumiere;
         _delay_ms(DELAIS_CLIGNOTER);
-        PORTB = LUMIERE_ETEINTE;
+        PORTC = LUMIERE_ETEINTE;
         _delay_ms(DELAIS_CLIGNOTER);
     }
 }

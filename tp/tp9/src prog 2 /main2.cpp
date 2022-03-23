@@ -1,4 +1,4 @@
-/*
+/**
 Travail : TRAVAIL_PRATIQUE 9
 Section # : 02
 Équipe # : EQUIPE_NO 3544
@@ -9,7 +9,6 @@ Notre coregraphie ne fonctionne pas parfaitement malheureusement malgre que nos 
 et meme apres avoir essayer beaucoup de methodes, les charges non plus n'ont pas reussis a nous aider davantage.
  Merci de votre comprehension.
 
-/*
 | Instruction binaire | mnémonique | Description                  |
 |---------------------|------------|------------------------------|
 | 0000 0001           | dbt        | début                        |
@@ -29,6 +28,7 @@ et meme apres avoir essayer beaucoup de methodes, les charges non plus n'ont pas
 | 11 111 111          | fin        | fin                          |
 
 */
+#define F_CPU 8000000UL
 #include <stdlib.h>
 #include <print.h>
 #include <avr/io.h>
@@ -62,17 +62,18 @@ const uint8_t FIN = 0xFF;
 
 int main()
 {
-    DDRB = 0xff; // PORTB pour la sortie de la DEL et Moteur
+    DDRB = 0xff; // PORTB pour la sortie du Moteur
     DDRD= 0xff;  // PORTD pour la sortie du son
+    DDRC= 0xff; // PORTC pour la sortie de la DEL
+    
 
     Memoire24CXXX m;
     Print p;
     Del del;
     Moteur moteur(PB5, PB6);
     Sonorite son;
-
     // Appel des variables
-    uint8_t instruction;
+    uint8_t instruction = 0;
     uint8_t operande;
     uint8_t iterations = 0;
     uint8_t adresseParcours = 0x00;
@@ -112,11 +113,14 @@ int main()
             
         case DAL:       //allumer Del en vert          
             del.SetCouleurLumiere(Etat::ROUGE);
+            p.afficherChaineCaractere("DAL");
             break;
 
         case DET:       //eteindre la Del
             del.SetCouleurLumiere(Etat::ETEINT);
             _delay_ms(5000);
+          p.afficherChaineCaractere("DET");
+
             break;
 
     
@@ -128,33 +132,37 @@ int main()
             }
             son.jouerNote(operande);
             _delay_ms(5000);
+          p.afficherChaineCaractere("SGO");
             break;
 
         case SAR:       //Arreter sonorite
             son.arret();
             _delay_ms(5000);
-            break;
-            
-        case MAR:       //Arreter le moteur
-            moteur.arret();
-            _delay_ms(5000);
+            p.afficherChaineCaractere("SAR");
+
             break;
 
-        case MAR_AUTRE: //Arreter le moteur (2)
+        case MAR_AUTRE:    
+        case MAR:       //Arreter le moteur
             moteur.arret();
+          p.afficherChaineCaractere("MAR");
             _delay_ms(5000);
             break;
 
         case MAV:     //Avancer le robot
             moteur.avancer(operande);
+             p.afficherChaineCaractere("MAV");
+
             break;
 
         case MRE:    //Reculer le robot
             moteur.reculer(operande);
+            p.afficherChaineCaractere("MRE");
             break;
 
         case TRD:    //Tourner a droite
             moteur.ajustementPwmNavigation(50, 0);
+            p.afficherChaineCaractere("TRD");
             break;
 
         case TRG:    //Tourner a gauche
@@ -165,11 +173,13 @@ int main()
        
             for (int i = 0; i < operande; i++)
                 _delay_ms(25);
+                p.afficherChaineCaractere("att");
             break;
 
         case DBC:    // Debut de boucle avec op = nb d iterations 
             debut = adresseParcours;
             iterations = operande +1;
+            p.afficherChaineCaractere("dbc");
             break;
 
         case FBC:    //fin de boucle 
@@ -182,6 +192,7 @@ int main()
             {
                 boucle = false;
             }
+            p.afficherChaineCaractere("fbc");
             break;
 
         case FIN:    //Fin du programme, mettre debut a false pour sortir du while
@@ -190,7 +201,9 @@ int main()
             son.arret();
             del.SetCouleurLumiere(Etat::ETEINT);
             debut = false;
+            p.afficherChaineCaractere("FIN");
             break;
         }
     }
+    
 }
