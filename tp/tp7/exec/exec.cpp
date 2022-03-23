@@ -18,8 +18,8 @@ int main()
 
     Del led;
     Bouton b;
-    led.clignoter(10, LUMIERE_VERTE);
-    led.clignoter(10, LUMIERE_ROUGE);
+    led.clignoter(1, LUMIERE_VERTE);
+    led.clignoter(1, LUMIERE_ROUGE);
     led.SetCouleurLumiere(Etat::VERT); // allumer del en vert pendant 5 sec
     _delay_ms(5000);
     led.SetCouleurLumiere(Etat::ROUGE); // allumer del en rouge pendant 5 sec
