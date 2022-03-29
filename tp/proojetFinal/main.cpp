@@ -12,3 +12,32 @@
 
 
 
+/*Boucle de démarrage:
+Bouton Interrupt pour le mode parcours, bouton blanc pour le mode reprise. Lorsqu'un bouton est appuyé, 
+le choix est confirmé à l'aide de la DEL libre. Elle devra clignoter à 5 Hz pendant 3 secondes. 
+En vert pour le mode suivi, en rouge pour le mode reprise.
+Le robot ne fait rien d'autre pendant le clignotement. Une fois ce dernier terminé, le robot passe au mode d'opération choisi.
+*/
+
+
+if (boutonBlanc)  //mode reprise,   doit durer 3 secondes donc 6 clignotement avec des délais de 200 comme dans la classe
+{
+    del.clignoter(15, LUMIERE_ROUGE);   
+}
+
+if (boutonInterrupt)  //mode suivi
+{
+    del.clignoter(15, LUMIERE_VERTE);   
+}
+
+
+
+
+
+Appuyer sur un bouton 
+int main()
+{
+
+del.clignoter(5, LUMIERE_VERTE);
+
+}
