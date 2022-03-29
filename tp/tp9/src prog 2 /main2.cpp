@@ -63,9 +63,8 @@ const uint8_t FIN = 0xFF;
 int main()
 {
     DDRB = 0xff; // PORTB pour la sortie du Moteur
-    DDRD= 0xff;  // PORTD pour la sortie du son
-    DDRC= 0xff; // PORTC pour la sortie de la DEL
-    
+    DDRD = 0xff; // PORTD pour la sortie du son
+    DDRC = 0xff; // PORTC pour la sortie de la DEL
 
     Memoire24CXXX m;
     Print p;
@@ -77,7 +76,7 @@ int main()
     uint8_t operande;
     uint8_t iterations = 0;
     uint8_t adresseParcours = 0x00;
-    bool debut  = false;
+    bool debut = false;
     bool boucle = false;
 
     // Lecture de la memoire sans executer les actions tant que DBT n'est pas detecte
@@ -89,14 +88,12 @@ int main()
         m.lecture(adresseParcours, &operande);
         _delay_ms(5);
         adresseParcours++;
-
     }
 
     // Routine de debut : clignoter la del 5 fois au rythme de 2 fois par sec (lumiere Verte)
-    
+
     debut = true;
     del.clignoter(5, LUMIERE_VERTE);
-    
 
     while (debut == true)
     {
@@ -106,83 +103,81 @@ int main()
         m.lecture(adresseParcours, &operande);
         _delay_ms(5);
         adresseParcours++;
-       
-        
-   switch (instruction)
+
+        switch (instruction)
         {
-            
-        case DAL:       //allumer Del en vert          
+
+        case DAL: //allumer Del en vert
             del.SetCouleurLumiere(Etat::ROUGE);
             p.afficherChaineCaractere("DAL");
             break;
 
-        case DET:       //eteindre la Del
+        case DET: //eteindre la Del
             del.SetCouleurLumiere(Etat::ETEINT);
             _delay_ms(5000);
-          p.afficherChaineCaractere("DET");
+            p.afficherChaineCaractere("DET");
 
             break;
 
-    
-        case SGO:       // jouer sonorite
-            if ( (operande < 45) || (operande > 81) )
+        case SGO: // jouer sonorite
+            if ((operande < 45) || (operande > 81))
             {
                 adresseParcours++;
                 break;
             }
             son.jouerNote(operande);
             _delay_ms(5000);
-          p.afficherChaineCaractere("SGO");
+            p.afficherChaineCaractere("SGO");
             break;
 
-        case SAR:       //Arreter sonorite
+        case SAR: //Arreter sonorite
             son.arret();
             _delay_ms(5000);
             p.afficherChaineCaractere("SAR");
 
             break;
 
-        case MAR_AUTRE:    
-        case MAR:       //Arreter le moteur
+        case MAR_AUTRE:
+        case MAR: //Arreter le moteur
             moteur.arret();
-          p.afficherChaineCaractere("MAR");
+            p.afficherChaineCaractere("MAR");
             _delay_ms(5000);
             break;
 
-        case MAV:     //Avancer le robot
+        case MAV: //Avancer le robot
             moteur.avancer(operande);
-             p.afficherChaineCaractere("MAV");
+            p.afficherChaineCaractere("MAV");
 
             break;
 
-        case MRE:    //Reculer le robot
+        case MRE: //Reculer le robot
             moteur.reculer(operande);
             p.afficherChaineCaractere("MRE");
             break;
 
-        case TRD:    //Tourner a droite
+        case TRD: //Tourner a droite
             moteur.ajustementPwmNavigation(50, 0);
             p.afficherChaineCaractere("TRD");
             break;
 
-        case TRG:    //Tourner a gauche
+        case TRG: //Tourner a gauche
             moteur.ajustementPwmNavigation(0, 50);
             break;
 
-        case ATT:    //attendre pendant un certain temps ( op * 25 ms)
-       
+        case ATT: //attendre pendant un certain temps ( op * 25 ms)
+
             for (int i = 0; i < operande; i++)
                 _delay_ms(25);
-                p.afficherChaineCaractere("att");
+            p.afficherChaineCaractere("att");
             break;
 
-        case DBC:    // Debut de boucle avec op = nb d iterations 
+        case DBC: // Debut de boucle avec op = nb d iterations
             debut = adresseParcours;
-            iterations = operande +1;
+            iterations = operande + 1;
             p.afficherChaineCaractere("dbc");
             break;
 
-        case FBC:    //fin de boucle 
+        case FBC: //fin de boucle
             iterations--;
             if (iterations > 0)
             {
@@ -195,7 +190,7 @@ int main()
             p.afficherChaineCaractere("fbc");
             break;
 
-        case FIN:    //Fin du programme, mettre debut a false pour sortir du while
+        case FIN: //Fin du programme, mettre debut a false pour sortir du while
 
             moteur.arret();
             son.arret();
@@ -205,5 +200,4 @@ int main()
             break;
         }
     }
-    
 }
