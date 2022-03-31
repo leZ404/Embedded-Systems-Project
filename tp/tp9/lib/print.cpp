@@ -34,6 +34,17 @@ void Print::afficherCaractere( const char donnees)
     UDR0 = donnees;
 
 }
+void Print::afficherEntier8bit (uint8_t donnees) {
+    char temp[10];
+    sprintf(temp, "%d", donnees);
+    afficherChaineCaractere(temp);
+}
+
+void Print::afficherEntier16bit (uint16_t donnees) {
+  while (!(UCSR0A & (1 << UDRE0)))
+    ;
+  UDR0 = donnees;
+}
 
 
 void Print::afficherChaineCaractere(const char *donnees)

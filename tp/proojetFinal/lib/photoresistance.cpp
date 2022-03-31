@@ -2,5 +2,8 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <photoresistance.h>
+#include <MoteurRoueDroite.h>
+#include <MoteurRoueGauche.h>
+
 
 

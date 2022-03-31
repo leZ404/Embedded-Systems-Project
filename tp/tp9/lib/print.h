@@ -17,6 +17,15 @@ public:
     // fonction pour afficher un caractere 
     void afficherCaractere( const char donnees);
 
+    // fonction pour afficher un  uint8_t
+
+    void afficherEntier8bit (uint8_t donnees);
+
+    // fonction pour afficher un uint16_t 
+
+    void afficherEntier16bit (uint16_t donnees);
+
+
 // fonction qui utilise la fonction precedente pour afficher une chaine de caractere 
 
     void afficherChaineCaractere(const char *donnees);
