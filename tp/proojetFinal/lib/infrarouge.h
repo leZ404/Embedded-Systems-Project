@@ -3,12 +3,13 @@
 #include <util/delay.h>
 #include "can.h"
 
-// class Infrarouge
-// {
-// public:
+class Infrarouge
+{
+public:
+uint8_t getVoltage();
+uint8_t getDistanceCm();
 
-// private:
 
 
 
-// }
+}

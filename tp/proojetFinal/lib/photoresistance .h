@@ -12,13 +12,9 @@ class PhotoResistance {
 public:
 PhotoResistance (uint8_t pinPhotoDroite ,uint8_t pinPhotoGauche );
 
-getDroit();
-
-
+uint8_t getDroit();
+uint8_t getGauche();
 
 private:
-
-
-
 
 } 
