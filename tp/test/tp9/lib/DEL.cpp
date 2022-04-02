@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <DEL.h>
 
-const uint8_t DELAIS_CLIGNOTER = 250;  // delai de 250 ms pour pouvir clignoter au rythme de 2 fois par sec
+const uint8_t DELAIS_CLIGNOTER = 100;  // delai de 100 ms pour pouvir clignoter au rythme de 2 fois par sec
 
 Del::Del()
 {

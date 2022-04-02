@@ -12,52 +12,41 @@
 #include <DEL.h>
 #include <sonorite.h>
 #include <bouton.h>
+#include <can.h>
 
-/*Boucle de démarrage:
-Bouton Interrupt pour le mode parcours, bouton blanc pour le mode reprise. Lorsqu'un bouton est appuyé, 
-le choix est confirmé à l'aide de la DEL libre. Elle devra clignoter à 5 Hz pendant 3 secondes. 
-En vert pour le mode suivi, en rouge pour le mode reprise.
-Le robot ne fait rien d'autre pendant le clignotement. Une fois ce dernier terminé, le robot passe au mode d'opération choisi.
-*/
-
-
-
-/*Fin Boucle de démarrage:*/
-
-/*avancement des roues en fonction des photoresistance*/
 Del del;
-Moteur moteur(PB5, PB6);
 Bouton bouton;
-// Infrarouge infrarouge;
-// Can lumiere= can();
-// Photoresistance photoresistance= can();
+Moteur moteur(PB3, PB4);
+Print p;
+can can;
 
-// pourcentageLumiereDroite = lumiere.lecture(1)/1024 * 100;  //photoresistance de droite
-// pourcentageLumiereGauche = lumiere.lecture(4)/1024 * 100; //photoresistance de gauche
+void modeParcours()
+{
+    if (bouton.appuiBouton(PA0))
+    {
+        del.clignoter(15, LUMIERE_ROUGE);
+    }
+}
 
-// moteur.ajustementPwmNavigation(uint8_t pourcentageLumiereDroite, uint8_t pourcentageLumiereGauche);
 
-
-
-//Appuyer sur un bouton 
 int main()
 {
 
-DDRA |= 0x00;
-DDRC |= 0xff;
-if (bouton.appuiBouton(PA4))
-{
-    PORTC = (1 << PC2);
-}
+    while (true)
+    {
+        modeParcours();
 
-// if (boutonInterrupt)  //mode suivi
-// {
-//     del.clignoter(15, LUMIERE_VERTE);   
-// }
+        //p.afficherEntier16bit(can.lecture(2));
+        if (can.lecture(2) > 320)              //valeur ~20cm = 320 pour le capteur
+        {
+            del.SetCouleurLumiere(Etat::ROUGE);
+        }
+        else
+        {
+            del.SetCouleurLumiere(Etat::VERT);
+        }
+        _delay_ms(300);
+        
 
-// pourcentageLumiereDroite = lumiere.lecture(1)/1024 * 100;  //photoresistance de droite
-// pourcentageLumiereGauche = lumiere.lecture(4)/1024 * 100; //photoresistance de gauche
-
-// moteur.ajustementPwmNavigation(uint8_t pourcentageLumiereDroite, uint8_t pourcentageLumiereGauche);
-
+    }
 }

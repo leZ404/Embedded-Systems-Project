@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//class Del pour PORTB
+//class Del pour PORTC
 
 
 const uint8_t LUMIERE_ETEINTE = 0x00;
