@@ -14,6 +14,11 @@
 #include <bouton.h>
 #include <can.h>
 
+//Define des valeurs
+#define IR 2
+#define DISTANCE_20 320
+
+//Creation des instances de classes
 Del del;
 Bouton bouton;
 Moteur moteur(PB3, PB4);
@@ -37,7 +42,7 @@ int main()
         modeParcours();
 
         //p.afficherEntier16bit(can.lecture(2));
-        if (can.lecture(2) > 320)              //valeur ~20cm = 320 pour le capteur
+        if (can.lecture(IR) > DISTANCE_20)              //valeur ~20cm = 320 pour le capteur
         {
             del.SetCouleurLumiere(Etat::ROUGE);
         }
