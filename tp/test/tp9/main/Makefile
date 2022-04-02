@@ -23,7 +23,7 @@ MCU=atmega324pa
 
 # Nom de votre projet
 # (utilisez un seul mot, exemple: 'monprojet')
-PROJECTNAME= executable2
+PROJECTNAME= executable
 
 # Fichiers sources
 # Utilisez le suffixe .cpp pour les fichiers C++
@@ -32,10 +32,10 @@ PROJECTNAME= executable2
 PRJSRC=  main.cpp
 
 # Inclusions additionnels (ex: -I/path/to/mydir)
-INC=-I./lib
+INC=-I../lib
 
 # Libraires a lier (ex: -lmylib)
-LIBS= -L./lib -ltest 
+LIBS= -L../lib -ltest 
 
 # Niveau d'optimization
 # Utilisez s (size opt), 1, 2, 3 ou 0 (off)

@@ -3,3 +3,12 @@
 #include <util/delay.h>
 #include "can.h"
 
+// class Infrarouge
+// {
+// public:
+
+// private:
+
+
+
+// }

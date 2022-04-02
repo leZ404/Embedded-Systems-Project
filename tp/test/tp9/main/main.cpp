@@ -1,3 +1,4 @@
+
 #define F_CPU 8000000UL
 #include <stdlib.h>
 #include <print.h>
@@ -7,12 +8,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <memoire_24.h>
-#include <moteur.h>
+#include <Moteur.h>
 #include <DEL.h>
-#include <infrarouge.h>
-#include <can.h>
-
-
+#include <sonorite.h>
+#include <bouton.h>
 
 /*Boucle de démarrage:
 Bouton Interrupt pour le mode parcours, bouton blanc pour le mode reprise. Lorsqu'un bouton est appuyé, 
@@ -43,9 +42,12 @@ Bouton bouton;
 //Appuyer sur un bouton 
 int main()
 {
-    if (bouton.appuiBouton(PA2))  //mode reprise,   doit durer 3 secondes donc 6 clignotement avec des délais de 200 comme dans la classe
+
+DDRA |= 0x00;
+DDRC |= 0xff;
+if (bouton.appuiBouton(PA4))
 {
-    del.clignoter(15, LUMIERE_ROUGE);   
+    PORTC = (1 << PC2);
 }
 
 // if (boutonInterrupt)  //mode suivi

@@ -1,4 +1,4 @@
-########       AVR Project Makefile       ########
+#######       AVR Project Makefile       ########
 #####                                        #####
 #####      Makefile produit et ecrit par     #####
 #####   Simon Barrette & Jerome Collin pour  #####
@@ -23,19 +23,19 @@ MCU=atmega324pa
 
 # Nom de votre projet
 # (utilisez un seul mot, exemple: 'monprojet')
-PROJECTNAME= executable2
+PROJECTNAME= libtest
 
 # Fichiers sources
 # Utilisez le suffixe .cpp pour les fichiers C++
 # Listez tous les fichiers a compiler, separes par
 # un espace. exemple: 'tp1.c tp2.cpp':
-PRJSRC=  main.cpp
+PRJSRC= Moteur.cpp print.cpp memoire_24.cpp can.cpp bouton.cpp DEL.cpp debug.cpp sonorite.cpp 
 
 # Inclusions additionnels (ex: -I/path/to/mydir)
-INC=-I./lib
+INC=
 
 # Libraires a lier (ex: -lmylib)
-LIBS= -L./lib -ltest 
+LIBS=
 
 # Niveau d'optimization
 # Utilisez s (size opt), 1, 2, 3 ou 0 (off)
@@ -73,8 +73,6 @@ HEXFORMAT=ihex
 
 
 
-
-
 ####### Options de compilation #######
 
 # Flags pour le compilateur en C
@@ -94,7 +92,7 @@ LDFLAGS=-Wl,-Map,$(TRG).map -mmcu=$(MCU)
 ####### Cible (Target) #######
 
 #Nom des cibles par defaut
-TRG=$(PROJECTNAME).elf
+TRG=$(PROJECTNAME).a
 HEXROMTRG=$(PROJECTNAME).hex
 HEXTRG=$(HEXROMTRG) $(PROJECTNAME).ee.hex
 
@@ -130,12 +128,10 @@ OBJDEPS=$(CFILES:.c=.o) \
 
 # Make all permet simplement de compiler le projet
 #
-all: $(TRG) $(HEXROMTRG)
-
+all: $(TRG)
 # Implementation de la cible
 $(TRG): $(OBJDEPS)
-	$(CC) $(LDFLAGS) -o $(TRG) $(OBJDEPS) \
-	-lm $(LIBS)
+	avr-ar crs $(TRG) $(OBJDEPS)
 
 # Production des fichiers object
 # De C a objet
@@ -166,7 +162,7 @@ install: $(HEXROMTRG)
 # Make clean permet d'effacer tout les fichiers generes
 # lors de la compilation
 clean:
-	$(REMOVE) $(TRG) $(TRG).map $(OBJDEPS) $(HEXTRG) *.d
+	$(REMOVE) $(TRG) $(TRG).map $(OBJDEPS) $(HEXTRG) *.d *.a
 
 # Pour plus d'information sur les phony target, consulter:
 # http://bit.ly/1WBQe61
