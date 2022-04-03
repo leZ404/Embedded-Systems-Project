@@ -6,7 +6,7 @@
 class Infrarouge
 {
 public:
-uint8_t getVoltage();
+uint8_t getVoltage(uint8_t pos);
 uint8_t getDistanceCm();
 
 
