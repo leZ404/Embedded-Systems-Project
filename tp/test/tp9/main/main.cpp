@@ -15,7 +15,7 @@
 #include <can.h>
 
 //Define des valeurs
-#define IR 2
+#define CAPTEUR_IR 2
 #define DISTANCE_20 320
 
 //Creation des instances de classes
@@ -25,33 +25,80 @@ Moteur moteur(PB3, PB4);
 Print p;
 can can;
 
+
+//variable globale
+volatile bool dbt = false;
+enum class State
+{
+    DBT = 0x01,
+    ATT = 0x02,
+    DAL = 0x44,
+    DET = 0x45,
+    SGO = 0x48,
+    SAR = 0x09,
+    MAR = 0x60,
+    MAR_AUTRE = 0x61,
+    MAV = 0x62,
+    MRE = 0x63,
+    TRD = 0x64,
+    TRG = 0x65,
+    DBC = 0xC0,
+    FBC = 0xC1,
+    FIN = 0xFF,
+};
+
 void modeParcours()
 {
     if (bouton.appuiBouton(PA0))
     {
         del.clignoter(15, LUMIERE_ROUGE);
+        //return true;
+        dbt = true;
     }
+    //return false;
 }
 
+bool testCapteurIR()
+{
+    if (can.lecture(CAPTEUR_IR) > DISTANCE_20) //valeur ~20cm = 320 pour le capteur
+    {
+        del.SetCouleurLumiere(Etat::ROUGE);
+        return true;
+    }
+    del.SetCouleurLumiere(Etat::VERT);
+    return false;
+}
+
+ISR(INT0_vect)
+{
+    //del.clignoter(15, LUMIERE_ROUGE);
+    modeParcours();
+    EIFR |= (1 << INTF0);
+}
+
+void initialisationInt0()
+{
+
+    cli();
+    DDRA &= ~(1 << PA0);
+    EIMSK |= (1 << INT0);
+    EICRA |= (1 << ISC01) | (1 << ISC00); // raising edge
+    sei();
+}
 
 int main()
 {
-
+    
+    initialisationInt0();
     while (true)
     {
-        modeParcours();
 
-        //p.afficherEntier16bit(can.lecture(2));
-        if (can.lecture(IR) > DISTANCE_20)              //valeur ~20cm = 320 pour le capteur
+        if (dbt)
         {
-            del.SetCouleurLumiere(Etat::ROUGE);
+            //mode parcours
+            del.clignoter(15, LUMIERE_VERTE);
+            dbt = !dbt;
         }
-        else
-        {
-            del.SetCouleurLumiere(Etat::VERT);
-        }
-        _delay_ms(300);
-        
-
+        del.SetCouleurLumiere(Etat::ROUGE);
     }
 }
