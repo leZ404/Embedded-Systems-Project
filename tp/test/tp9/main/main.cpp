@@ -24,38 +24,33 @@ Bouton bouton;
 Moteur moteur(PB3, PB4);
 Print p;
 can can;
-
+Memoire24CXXX m;
 
 //variable globale
 volatile bool dbt = false;
-enum class State
-{
-    DBT = 0x01,
-    ATT = 0x02,
-    DAL = 0x44,
-    DET = 0x45,
-    SGO = 0x48,
-    SAR = 0x09,
-    MAR = 0x60,
-    MAR_AUTRE = 0x61,
-    MAV = 0x62,
-    MRE = 0x63,
-    TRD = 0x64,
-    TRG = 0x65,
-    DBC = 0xC0,
-    FBC = 0xC1,
-    FIN = 0xFF,
-};
+
+const uint16_t DBT = 0x01;
+const uint16_t ATT = 0x02;
+const uint16_t DAL = 0x44;
+const uint16_t DET = 0x45;
+const uint16_t SGO = 0x48;
+const uint16_t SAR = 0x09;
+const uint16_t MAR = 0x60;
+const uint16_t MAR_AUTRE = 0x61;
+const uint16_t MAV = 0x62;
+const uint16_t MRE = 0x63;
+const uint16_t TRD = 0x64;
+const uint16_t TRG = 0x65;
+const uint16_t DBC = 0xC0;
+const uint16_t FBC = 0xC1;
+const uint16_t FIN = 0xFF;
 
 void modeParcours()
 {
-    if (bouton.appuiBouton(PA0))
-    {
-        del.clignoter(15, LUMIERE_ROUGE);
-        //return true;
-        dbt = true;
-    }
-    //return false;
+
+    del.clignoter(15, LUMIERE_ROUGE);
+
+    dbt = true;
 }
 
 bool testCapteurIR()
@@ -71,7 +66,7 @@ bool testCapteurIR()
 
 ISR(INT0_vect)
 {
-    //del.clignoter(15, LUMIERE_ROUGE);
+
     modeParcours();
     EIFR |= (1 << INTF0);
 }
@@ -86,19 +81,49 @@ void initialisationInt0()
     sei();
 }
 
+void retirerInt0()
+{
+    EIMSK = 0x00;
+    EICRA = 0x00;
+}
+
+
+//Concepte de notre code
 int main()
 {
-    
+    uint8_t instruction = 0;
+    bool reprise = false;
     initialisationInt0();
+    del.SetCouleurLumiere(Etat::VERT);
     while (true)
     {
-
         if (dbt)
         {
             //mode parcours
+            //retirerInt0(); //Retirer interrupt pour laisser en mode parcours
+
             del.clignoter(15, LUMIERE_VERTE);
+            m.ecriture(1, DAL);
+            _delay_ms(1000);
+            del.SetCouleurLumiere(Etat::VERT);
+            _delay_ms(1000);
             dbt = !dbt;
+
+            reprise = !reprise;
         }
-        del.SetCouleurLumiere(Etat::ROUGE);
+
+        if (reprise)
+        {
+            m.lecture(2,&instruction);
+            if (instruction == DAL)
+            {
+                del.SetCouleurLumiere(Etat::ROUGE);
+            }
+            else
+            {
+                del.SetCouleurLumiere(Etat::ETEINT);
+            }
+            
+        }
     }
 }
