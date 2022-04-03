@@ -4,16 +4,14 @@
 #include <can.h>
 #include <avr/io.h> 
 #include <avr/interrupt.h>
-#include <photoresistance.h>
 #include <MoteurRoueDroite.h>
 #include <MoteurRoueGauche.h>
 
 class PhotoResistance {
 public:
-PhotoResistance (uint8_t pinPhotoDroite ,uint8_t pinPhotoGauche );
 
-uint8_t getDroit();
-uint8_t getGauche();
+uint8_t getDroit(uint8_t pos);
+uint8_t getGauche(uint8_t pos);
 
 private:
 
