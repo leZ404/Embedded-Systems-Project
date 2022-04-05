@@ -11,13 +11,15 @@
 #include <DEL.h>
 #include <sonorite.h>
 #include <bouton.h>
+#include <can.h>
 
+/*
 /*Boucle de démarrage:
 Bouton Interrupt pour le mode parcours, bouton blanc pour le mode reprise. Lorsqu'un bouton est appuyé, 
 le choix est confirmé à l'aide de la DEL libre. Elle devra clignoter à 5 Hz pendant 3 secondes. 
 En vert pour le mode suivi, en rouge pour le mode reprise.
 Le robot ne fait rien d'autre pendant le clignotement. Une fois ce dernier terminé, le robot passe au mode d'opération choisi.
-*/
+/*
 
 
 //routine d'interruption<s
@@ -99,3 +101,80 @@ int main()
     }
    
 }
+*/
+
+
+const uint16_t MAX_CAN = 1024;
+
+//Appuyer sur un bouton 
+
+int main()
+{
+  //  DDRC = 0xff;
+     DDRB = 0xff;
+     DDRA= 0x00;
+//  PORTC = (1<<PC2);
+ Moteur moteur(PB5, PB6);
+Bouton bouton;
+//Infrarouge infrarouge;
+ //can lumiere=  can();
+can obstacle=  can();
+
+ Del del ;
+ Print p; 
+ Memoire24CXXX m;
+
+
+ uint16_t lumiereDroite=  1002 >> 2;  //photoresistance de droite lumiere.lecture(1)
+ uint16_t lumiereGauche =  1024 >> 2; //photoresistance de gauche  lumiere.lecture(4)
+
+
+ //moteur.avancer(200);
+//moteur.ajustementPwmNavigation( pourcentageLumiereDroite,  pourcentageLumiereGauche);
+
+while(true)
+{
+     del.SetCouleurLumiere(Etat::VERT);
+     _delay_ms(3000);
+
+    del.SetCouleurLumiere(Etat::ROUGE);
+    moteur.ajustementPwmNavigation(140, 140);
+  
+
+if(obstacle.lecture(7) > 320)
+{
+    del.SetCouleurLumiere(Etat::ETEINT);
+   moteur.ajustementPwmNavigation(65, 0);
+    _delay_ms(2000);
+   //moteur.avancer(230);
+   // moteur.ajustementPwmNavigation(70, 45);
+
+}
+
+}
+_delay_ms(20000);
+
+del.SetCouleurLumiere(Etat::ROUGE);
+_delay_ms(20000);
+del.clignoter(4,LUMIERE_VERTE);
+
+ 
+  
+
+   }
+
+// while(true)
+// {
+//     PORTC = (1<<PC2);
+
+//     if (bouton.appuiBouton(PA2))  //mode reprise,   doit durer 3 secondes donc 6 clignotement avec des délais de 200 comme dans la classe
+//     {
+//         del.clignoter(15, LUMIERE_ROUGE);
+//     }
+// }
+// if (boutonInterrupt)  //mode suivi
+// {
+//     del.clignoter(15, LUMIERE_VERTE);
+// }
+
+
