@@ -26,7 +26,7 @@ public:
 
 
     // fonction pour ajuster le pwm selon des pourcentages (celui de droite est independant de celui de gauche) 
-    void ajustementPwmNavigation(uint8_t pourcentageDroite, uint8_t dureeRoueGauche);
+    void ajustementPwmNavigation(uint16_t valRoueDroite, uint16_t valRoueGauche);
 
 private:
     uint8_t _directionDroite;      // pin de direction roue droite 

@@ -21,6 +21,13 @@ public:
 
     void afficherChaineCaractere(const char *donnees);
 
+ // fonction pour afficher un  uint8_t
+
+    void afficherEntier8bit (uint8_t donnees);
+
+    // fonction pour afficher un uint16_t 
+
+    void afficherEntier16bit (uint16_t donnees);
 
 unsigned char USART_Receive( void );
 
