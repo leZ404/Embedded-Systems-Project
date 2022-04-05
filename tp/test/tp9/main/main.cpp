@@ -48,7 +48,7 @@ const uint16_t FIN = 0xFF;
 void modeParcours()
 {
 
-    del.clignoter(15, LUMIERE_ROUGE);
+    del.clignoter(15, LUMIERE_VERTE);
 
     dbt = true;
 }
@@ -87,9 +87,7 @@ void retirerInt0()
     EICRA = 0x00;
 }
 
-
-//Concepte de notre code
-int main()
+void testMemoire()
 {
     uint8_t instruction = 0;
     bool reprise = false;
@@ -114,7 +112,7 @@ int main()
 
         if (reprise)
         {
-            m.lecture(2,&instruction);
+            m.lecture(1, &instruction);
             if (instruction == DAL)
             {
                 del.SetCouleurLumiere(Etat::ROUGE);
@@ -123,7 +121,24 @@ int main()
             {
                 del.SetCouleurLumiere(Etat::ETEINT);
             }
-            
         }
     }
+}
+//Test de l'ecriture et lecture des instructions en memoire
+
+//Concepte de notre code
+int main()
+{
+    uint8_t instruction = 0;
+    uint8_t compteurInstruction = 0;
+    uint8_t addresse = 0;
+
+    if (dbt)
+    {
+        //Parcours de suivi de mur
+    }
+
+    /*
+        Parcours de reprise
+    */
 }
