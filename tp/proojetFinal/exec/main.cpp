@@ -110,11 +110,11 @@ const uint16_t MAX_CAN = 1024;
 
 int main()
 {
-  //  DDRC = 0xff;
-     DDRB = 0xff;
-     DDRA= 0x00;
-//  PORTC = (1<<PC2);
- Moteur moteur(PB5, PB6);
+    DDRC = 0xff;
+    DDRB = 0xff;
+    DDRA= 0x00;
+
+Moteur moteur(PB5, PB6);
 Bouton bouton;
 //Infrarouge infrarouge;
  //can lumiere=  can();
