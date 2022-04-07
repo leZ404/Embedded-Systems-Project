@@ -8,8 +8,8 @@
 
 
 const uint8_t LUMIERE_ETEINTE = 0x00;
-const uint8_t LUMIERE_ROUGE = (1 << PC2);
-const uint8_t LUMIERE_VERTE = (1 << PC3);
+const uint8_t LUMIERE_ROUGE = (1 << PD0);
+const uint8_t LUMIERE_VERTE = (1 << PD1);
 
 
 // differents etats d'une Led

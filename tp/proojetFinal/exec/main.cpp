@@ -113,50 +113,55 @@ int main()
     DDRC = 0xff;
     DDRB = 0xff;
     DDRA= 0x00;
+    DDRD = 0x00;
 
 Moteur moteur(PB5, PB6);
 Bouton bouton;
 //Infrarouge infrarouge;
  //can lumiere=  can();
-can obstacle=  can();
+can obstacle;
 
  Del del ;
  Print p; 
  Memoire24CXXX m;
-
+ Bouton b; 
 
  uint16_t lumiereDroite=  1002 >> 2;  //photoresistance de droite lumiere.lecture(1)
- uint16_t lumiereGauche =  1024 >> 2; //photoresistance de gauche  lumiere.lecture(4)
+ uint16_t lumiereGauche =  1023 >> 2; //photoresistance de gauche  lumiere.lecture(4)
 
+ 
 
- //moteur.avancer(200);
-//moteur.ajustementPwmNavigation( pourcentageLumiereDroite,  pourcentageLumiereGauche);
 
 while(true)
-{
-     del.SetCouleurLumiere(Etat::VERT);
-     _delay_ms(3000);
+{     
+ 
+ del.SetCouleurLumiere(Etat::VERT);
+   // moteur.ajustementPwmNavigation(150, 150);
+    //  p.afficherEntier8bit(obstacle.lecture(8)>>2);
+    //  p.afficherCaractere('\n');
 
-    del.SetCouleurLumiere(Etat::ROUGE);
-    moteur.ajustementPwmNavigation(140, 140);
-  
+       if (b.appuiBouton(PD0))
+        {
+            del.clignoter(10, LUMIERE_ROUGE);
+        }
+
+/*
 
 if(obstacle.lecture(7) > 320)
+
 {
-    del.SetCouleurLumiere(Etat::ETEINT);
-   moteur.ajustementPwmNavigation(65, 0);
-    _delay_ms(2000);
-   //moteur.avancer(230);
-   // moteur.ajustementPwmNavigation(70, 45);
-
+    p.afficherEntier8bit(obstacle.lecture(7)>>2);
+    del.SetCouleurLumiere(Etat::ROUGE);
+   moteur.ajustementPwmNavigation(100, 0);
+    _delay_ms(500);
 }
-
+*/
 }
-_delay_ms(20000);
+//_delay_ms(20000);
 
-del.SetCouleurLumiere(Etat::ROUGE);
-_delay_ms(20000);
-del.clignoter(4,LUMIERE_VERTE);
+//del.SetCouleurLumiere(Etat::ROUGE);
+//_delay_ms(20000);
+//del.clignoter(4,LUMIERE_VERTE);
 
  
   
