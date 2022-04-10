@@ -54,8 +54,8 @@ uint16_t obstacle()
 
 int main()
 {
-
-    DDRC = 0xff;
+    DDRD = 0x00
+    DDRC = 0x00;
     DDRB = 0xff;
     DDRA = 0x00;
 
@@ -67,6 +67,7 @@ int main()
     uint8_t count = 0;
     uint8_t i = 0;
     bool mur = false;
+    bool finParcours = false;
     Etat instruction = Etat::DEBUTPARCOURS;
     while (true)
     {
@@ -75,7 +76,18 @@ int main()
             del.clignoter(4, LUMIERE_VERTE);
             switch (instruction)
             {
-            case Etat::SUIVREMUR:
+                case Etat::DEBUTPARCOURS:
+                while (obstacle() < 430)
+                {
+                    moteur.ajustementPwmNavigation(100, 100);
+                    m.ecriture(count++, MAV);
+                }
+                mur = true;
+                instruction = Etat::SUIVREMUR;
+                
+                break;
+            
+                case Etat::SUIVREMUR:
                 while (mur)
                 {
                     moteur.ajustementPwmNavigation(100);
@@ -88,23 +100,67 @@ int main()
                         _delay_ms(1000);
                         m.ecriture(count++, ATT);
                     }
+                    else if (obstacle() > 700)
+                    {
+                        mur = false;
+                        instruction = Etat::ATTENTE;
 
+
+                    }
+                    break;
                     //A la fin du mur, mettre mur = false
                 }
-                instruction = Etat::ATTENTE;
-                break;
-            case Etat::ATTENTE:
-            case Etat::MODETOURNER:
-            case Etat::DEBUTPARCOURS:
-                while (obstacle() < 430)
+                
+                
+
+                case Etat::ATTENTE:
+                while(capteur.lecture(0)) < 100)  // Mode Suivi Lumiere
                 {
-                    moteur.ajustementPwmNavigation(100);
-                    m.ecriture(count++, MAV);
+                    moteur.ajustementPWM(lumiereGauche, lumiereDroite);
+                    ; // METTRE CONDITION POUR DIFFERENTIER DROITE OU GAUCHE DANS LECRITURE
+                }
+                
+                while(capteur.lecture(2)) < 100)
+                {
+                    moteur.ajustementPWM(lumiereGauche, lumiereDroite); // METTRE CONDITION POUR DIFFERENTIER DROITE OU GAUCHE DANS LECRITURE
+                    m.ecriture(count++, TRG);
+                    _delay_ms(1000);
+                    m.ecriture(count++, ATT);
                 }
                 instruction = Etat::SUIVREMUR;
-                mur = true;
-                break;
-            case Instruction::FINPARCOURS:
+
+                if (b.appuiBouton(PA0)) // Mode Fin Parcours
+                {
+                    finParcours = true;
+                    instruction = Etat::FINPARCOURS;
+                    break;
+
+                }
+                else if(b.appuiBouton(PA2)) // BOUTON BLANC MODE VIRAGE
+                {   
+                    finParcours = false;
+                    instruction = Etat::MODETOURNER;
+                }                           
+
+                case Etat::FINPARCOURS:
+                    del.SetCouleurLumiere(Etat::ROUGE);
+                    m.ecriture(count++, TRG);
+                    del.SetCouleurLumiere(Etat::VERT);
+
+                if (b.appuiBouton(PA2))// Debut mode reprise
+                {
+                    m.lecture(); //Faire le mode reprise
+                }           
+            
+            
+                case Etat:: MODETOURNER:
+                {
+                    //AJUSTEMENRPWM AVEC VALEUR ET DELAY DU TEST 
+                }
+
+            
+            
             }
         }
     }
+}

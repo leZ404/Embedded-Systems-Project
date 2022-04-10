@@ -125,32 +125,113 @@ can obstacle;
  Memoire24CXXX m;
  Bouton b; 
 
- uint16_t lumiereDroite=  1002 >> 2;  //photoresistance de droite lumiere.lecture(1)
- uint16_t lumiereGauche =  1023 >> 2; //photoresistance de gauche  lumiere.lecture(4)
+  uint16_t lumiereDroite=  obstacle.lecture(2) >> 2;  //photoresistance de droite lumiere.lecture(1)
+ uint16_t lumiereGauche =  obstacle.lecture(1) >> 2; //photoresistance de gauche  lumiere.lecture(4)
 
  
 //TEST PHOTORESISTANCE ET OBSTACLE
 
-while(true)
-{     
+// while(true)
+// {     
+      
+// //  moteur.ajustementPwmNavigation(170,200);         // roue gauche = roue droite * 0.85 
+// //     _delay_ms(5000);
+// //   moteur.ajustementPwmNavigation(150,0);   
+// //      _delay_ms(1500);
+//     // p.afficherEntier8bit(obstacle.lecture(2)>>2);
+//     // _delay_ms(500);
+//     // p.afficherCaractere('\n');
+
+     
+//      //Test Suivi Lumiere
+
+//   uint16_t lumiereDroite; //photoresistance de droite lumiere.lecture(1)
+//  uint16_t lumiereGauche;//photoresistance de gauche  lumiere.lecture(4)
+
+
+
+
+
+
+
+
+//   while(obstacle.lecture(2) > 300)
+//   {
+//     lumiereDroite=  (obstacle.lecture(2) >> 2) + 20;
+//     lumiereGauche =  (obstacle.lecture(1) >> 2) + 20;
+//          moteur.ajustementPwmNavigation(lumiereGauche, lumiereDroite);
+//          p.afficherEntier8bit(lumiereGauche);
+//          p.afficherCaractere('-');
+//         p.afficherEntier8bit(lumiereDroite);
+
+//          _delay_ms(500);
+//         // p.afficherCaractere('\n');
+//         // p.afficherEntier8bit(obstacle.lecture(2));
+//         // _delay_ms(500);
+//          p.afficherCaractere('\n');
+//     }
     
-    
-    // p.afficherEntier8bit(obstacle.lecture(2)>>2);
-    // _delay_ms(500);
-    // p.afficherCaractere('\n');
-    
-    if ((obstacle.lecture(0)) > 430 )
-    {
-        del.SetCouleurLumiere(Etat::ROUGE);
+//     while(obstacle.lecture(2) < 300)
+//       {
+//         lumiereGauche =  (obstacle.lecture(1) >> 2) + 20;
+//     lumiereDroite=  (obstacle.lecture(2) >> 2) + 20;
+//           p.afficherCaractere('X');
+//            p.afficherEntier8bit(lumiereGauche);
+//          p.afficherCaractere('-');
+//         p.afficherEntier8bit(lumiereDroite);
+//         p.afficherCaractere('X');
+//          p.afficherCaractere('\n');
+//          _delay_ms(500);
+//      }
+
+     /*
+     while(obstacle.lecture(1) > 100)
+     {
+         moteur.ajustementPwmNavigation(lumiereGauche, lumiereDroite);
+         p.afficherCaractere('2');
+                  p.afficherEntier8bit(lumiereGauche);
+                p.afficherCaractere('\n');
+                 p.afficherEntier8bit(lumiereDroite);
+
+
     }
-    else
-    {
-        del.SetCouleurLumiere(Etat::VERT);
-    }
+*/
+     //Test mode Tourner
+    
+    
+    
+    //moteur.ajustementPwmNavigation(100, 0);
+    
+    // // if ((obstacle.lecture(0)) > 430 )
+    // // {
+    // //     del.SetCouleurLumiere(Etat::ROUGE);
+    // // }
+    // // else
+    // // {
+    // //     del.SetCouleurLumiere(Etat::VERT);
+    // // }
     
 
+    /*
+    moteur.ajustementPwmNavigation(220,100);
+    _delay_ms(5000);
+     moteur.ajustementPwmNavigation(0,100);
+     p.afficherChaineCaractere("droite ");
+         p.afficherCaractere('\n');
     
+
+    _delay_ms(5000);
+     moteur.ajustementPwmNavigation(100,0);
+     p.afficherChaineCaractere("gauche");
+      p.afficherCaractere('\n');
     
+
+    _delay_ms(5000);
+     moteur.ajustementPwmNavigation(-200,-200);
+        _delay_ms(5000);
+        moteur.reculer(90);
+
+    */
     //moteur.ajustementPwmNavigation(100, 0);
    
     
@@ -176,7 +257,7 @@ while(true)
 //     _delay_ms(500);
 // }
 
-}
+
 //_delay_ms(20000);
 
 //del.SetCouleurLumiere(Etat::ROUGE);
@@ -191,13 +272,13 @@ while(true)
 
 
 // Test BOUTON:
-// while(true)
-// {
-//     del.SetCouleurLumiere(Etat::ROUGE);
-//     // if (bouton.appuiBouton(PC5))  //mode reprise,   doit durer 3 secondes donc 6 clignotement avec des délais de 200 comme dans la classe
-//     // {
-//     //     del.clignoter(15, LUMIERE_VERTE);
-//     // }
+while(true)
+{
+    del.SetCouleurLumiere(Etat::ROUGE);
+    if (bouton.appuiBouton(PA4))  //mode reprise,   doit durer 3 secondes donc 6 clignotement avec des délais de 200 comme dans la classe
+    {
+        del.clignoter(15, LUMIERE_VERTE);
+    }
 //      if (bouton.appuiBouton(PC4))  //mode reprise,   doit durer 3 secondes donc 6 clignotement avec des délais de 200 comme dans la classe
 //     {
 //         del.clignoter(15, LUMIERE_ROUGE);
@@ -206,4 +287,5 @@ while(true)
 
 
 
+}
 }
