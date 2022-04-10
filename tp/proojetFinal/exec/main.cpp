@@ -110,7 +110,7 @@ const uint16_t MAX_CAN = 1024;
 
 int main()
 {
-    DDRC = 0xff;
+    DDRC = 0x00;
     DDRB = 0xff;
     DDRA= 0x00;
     DDRD = 0x00;
@@ -118,7 +118,6 @@ int main()
 Moteur moteur(PB5, PB6);
 Bouton bouton;
 //Infrarouge infrarouge;
- //can lumiere=  can();
 can obstacle;
 
  Del del ;
@@ -130,32 +129,52 @@ can obstacle;
  uint16_t lumiereGauche =  1023 >> 2; //photoresistance de gauche  lumiere.lecture(4)
 
  
-
+//TEST PHOTORESISTANCE ET OBSTACLE
 
 while(true)
 {     
+    
+    
+    // p.afficherEntier8bit(obstacle.lecture(2)>>2);
+    // _delay_ms(500);
+    // p.afficherCaractere('\n');
+    
+    if ((obstacle.lecture(2)>>2) < 103 )
+    {
+        del.SetCouleurLumiere(Etat::ROUGE);
+    }
+    else
+    {
+        del.SetCouleurLumiere(Etat::VERT);
+    }
+
+    
+    
+    //moteur.ajustementPwmNavigation(100, 0);
+   
+    
+//      if(obstacle.lecture(3) > 1020)
+//     {
+//   //p.afficherEntier8bit(obstacle.lecture(7)>>2);
+//     del.clignoter(4,LUMIERE_ROUGE);
+//    moteur.ajustementPwmNavigation(100, 0);
+//     _delay_ms(500);
+//     }
  
- del.SetCouleurLumiere(Etat::VERT);
+   
    // moteur.ajustementPwmNavigation(150, 150);
     //  p.afficherEntier8bit(obstacle.lecture(8)>>2);
     //  p.afficherCaractere('\n');
 
-       if (b.appuiBouton(PD0))
-        {
-            del.clignoter(10, LUMIERE_ROUGE);
-        }
+// if(obstacle.lecture(7) > 430)
 
-/*
+// {
+//   //  p.afficherEntier8bit(obstacle.lecture(7)>>2);
+//     del.clignoter(4,LUMIERE_VERTE);
+//    moteur.ajustementPwmNavigation(100, 0);
+//     _delay_ms(500);
+// }
 
-if(obstacle.lecture(7) > 320)
-
-{
-    p.afficherEntier8bit(obstacle.lecture(7)>>2);
-    del.SetCouleurLumiere(Etat::ROUGE);
-   moteur.ajustementPwmNavigation(100, 0);
-    _delay_ms(500);
-}
-*/
 }
 //_delay_ms(20000);
 
@@ -166,20 +185,24 @@ if(obstacle.lecture(7) > 320)
  
   
 
-   }
+   
 
+
+
+// Test BOUTON:
 // while(true)
 // {
-//     PORTC = (1<<PC2);
-
-//     if (bouton.appuiBouton(PA2))  //mode reprise,   doit durer 3 secondes donc 6 clignotement avec des délais de 200 comme dans la classe
+//     del.SetCouleurLumiere(Etat::ROUGE);
+//     // if (bouton.appuiBouton(PC5))  //mode reprise,   doit durer 3 secondes donc 6 clignotement avec des délais de 200 comme dans la classe
+//     // {
+//     //     del.clignoter(15, LUMIERE_VERTE);
+//     // }
+//      if (bouton.appuiBouton(PC4))  //mode reprise,   doit durer 3 secondes donc 6 clignotement avec des délais de 200 comme dans la classe
 //     {
 //         del.clignoter(15, LUMIERE_ROUGE);
 //     }
-// }
-// if (boutonInterrupt)  //mode suivi
-// {
-//     del.clignoter(15, LUMIERE_VERTE);
-// }
+//  }
 
 
+
+}

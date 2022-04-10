@@ -10,7 +10,7 @@ class Bouton
 public:
     Bouton()
     {
-        DDRA |= 0x00;
+        DDRC |= 0x00;
     };
     //~Bouton();
 

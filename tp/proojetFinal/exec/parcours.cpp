@@ -50,7 +50,7 @@ while (true)
         switch(instruction)
         {
             case Instruction::SUIVREMUR:
-            if(obstacle > 320)
+            if(obstacle > 430)
             {
                 moteur.ajustementPwmNavigation(AJUSTEMENT_DROIT, AJUSTEMENT_GAUCHE);
                     _delay_ms(1000);
