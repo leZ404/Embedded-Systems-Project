@@ -139,7 +139,7 @@ while(true)
     // _delay_ms(500);
     // p.afficherCaractere('\n');
     
-    if ((obstacle.lecture(2)>>2) < 103 )
+    if ((obstacle.lecture(0)) > 430 )
     {
         del.SetCouleurLumiere(Etat::ROUGE);
     }
@@ -147,6 +147,7 @@ while(true)
     {
         del.SetCouleurLumiere(Etat::VERT);
     }
+    
 
     
     
