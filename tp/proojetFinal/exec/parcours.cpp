@@ -39,12 +39,13 @@ const uint16_t FIN = 0xFF;
 
 enum class Etat
 {
-    DEBUTPARCOURS,
-    SUIVREMUR,
+    DEBUT_PARCOURS,
+    SUIVRE_MUR,
     ATTENTE,
-    MODETOURNER,
-    SUIVILUMIERE,
-    FINPARCOURS
+    MODE_TOURNER,
+    SUIVI_LUMIERE,
+    SUIVRE_SANS_ENREGISTRER,
+    FIN_PARCOURS
 };
 
 uint16_t obstacle()
@@ -67,26 +68,25 @@ int main()
     uint8_t i = 0;
     bool mur = false;
     bool finParcours = false;
-    Etat instruction = Etat::DEBUTPARCOURS;
+    Etat instruction = Etat::DEBUT_PARCOURS;
     while (true)
     {
         if (b.appuiBouton(PA0))
         {
-            del.clignoter(4, LUMIERE_VERTE);
+            del.clignoter(15, LUMIERE_VERTE);
             switch (instruction)
             {
-            case Etat::DEBUTPARCOURS:
+            case Etat::DEBUT_PARCOURS:
                 while (obstacle() < 430)
                 {
                     moteur.ajustementPwmNavigation(100, 100);
                     m.ecriture(count++, MAV);
                 }
                 mur = true;
-                instruction = Etat::SUIVREMUR;
-
+                instruction = Etat::SUIVRE_MUR;
                 break;
 
-            case Etat::SUIVREMUR:
+            case Etat::SUIVRE_MUR:
                 while (mur)
                 {
                     moteur.ajustementPwmNavigation(100);
@@ -103,12 +103,36 @@ int main()
                     {
                         mur = false;
                         instruction = Etat::ATTENTE;
+                        break;
                     }
-                    break;
+                    
                     //A la fin du mur, mettre mur = false
                 }
+                break;
 
             case Etat::ATTENTE:
+                if(capteur.lecture(0)) > 200 || capteur.lecture(2)) > 200 )  // Mode Suivi Lumiere
+                {
+                    moteur.ajustementPWM(lumiereGauche, lumiereDroite);
+                     // METTRE CONDITION POUR DIFFERENTIER DROITE OU GAUCHE DANS LECRITURE
+                    instruction = Etat::SUIVI_LUMIERE;
+                    break;
+                }
+                  
+                if (b.appuiBouton(PA0)) // Mode Fin Parcours
+                {
+                    instruction = Etat::FIN_PARCOURS;
+                    break;
+                }
+
+                if (b.appuiBouton(PA2)) // BOUTON BLANC MODE TOURNER
+                {
+                    finParcours = false;
+                    instruction = Etat::MODE_TOURNER;
+                    break;
+                }
+
+            case Etat::SUIVI_LUMIERE:
                 while (capteur.lecture(0)) < 100)  // Mode Suivi Lumiere
                     {
                         moteur.ajustementPWM(lumiereGauche, lumiereDroite);
@@ -122,34 +146,55 @@ int main()
                         _delay_ms(1000);
                         m.ecriture(count++, ATT);
                     }
-                instruction = Etat::SUIVREMUR;
+                instruction = Etat::SUIVRE_MUR;
+                break;
+            }
 
-                if (b.appuiBouton(PA0)) // Mode Fin Parcours
+            case Etat::MODE_TOURNER:
+            {
+                //AJUSTEMENRPWM AVEC VALEUR ET DELAY DU TEST
+                instruction = Etat::SUIVRE_SANS_ENREGISTRER;
+                break;
+            }
+
+            case Etat::SUIVRE_SANS_ENREGISTRER:
+                while (mur)
                 {
-                    finParcours = true;
-                    instruction = Etat::FINPARCOURS;
+                    moteur.ajustementPwmNavigation(100);
+                    m.ecriture(count++, MAV);
+
+                    if (obstacle() > 430)
+                    {
+                        moteur.ajustementPwmNavigation(AJUSTEMENT_DROIT, AJUSTEMENT_GAUCHE);
+                        m.ecriture(count++, TRG);
+                        _delay_ms(1000);
+                        m.ecriture(count++, ATT);
+                    }
+                    else if (obstacle() > 700)
+                    {
+                        mur = false;
+                        instruction = Etat::FIN_PARCOURS;
+                    }
                     break;
-                }
-                else if (b.appuiBouton(PA2)) // BOUTON BLANC MODE VIRAGE
-                {
-                    finParcours = false;
-                    instruction = Etat::MODETOURNER;
+                    //A la fin du mur, mettre mur = false
                 }
 
-            case Etat::FINPARCOURS:
+            case Etat::FIN_PARCOURS:
                 del.SetCouleurLumiere(Etat::ROUGE);
-                m.ecriture(count++, TRG);
                 del.SetCouleurLumiere(Etat::VERT);
-
+                
                 if (b.appuiBouton(PA2)) // Debut mode reprise
                 {
+                    del.clignoter(15, LUMIERE_ROUGE);
                     m.lecture(); //Faire le mode reprise
                 }
 
-            case Etat::MODETOURNER:
-            {
-                //AJUSTEMENRPWM AVEC VALEUR ET DELAY DU TEST
-            }
+                if (b.appuiBouton(PA0)) // Debut mode reprise
+                {
+                    instruction = Etat::DEBUT_PARCOURS;
+                }
+                break;
+
             }
         }
     }

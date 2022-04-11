@@ -16,8 +16,8 @@ Moteur::Moteur(uint8_t pinDirectionDroite, uint8_t pinDirectionGauche)
 void Moteur::avancer(uint8_t valPWM) // Prend la valeur PWM
 {
 
-    OCR0A = valPWM; //0-255
-    OCR0B = valPWM; //0-255
+    OCR0A = valPWM; //0-255 
+    OCR0B = valPWM; //0-255 mettre = 85%s
     PORTB &= ~(1 << _directionDroite);
     PORTB &= ~(1 << _directionGauche);
 
