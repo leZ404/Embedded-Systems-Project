@@ -5,20 +5,18 @@
 #include <stdlib.h>
 #include <DEL.h>
 
-const uint8_t DELAIS_CLIGNOTER = 100;  // delai de 200 ms pour pouvir clignoter au rythme de 2 fois par sec
+const uint8_t DELAIS_CLIGNOTER = 100; // delai de 200 ms pour pouvir clignoter au rythme de 2 fois par sec
 
 Del::Del()
 {
     DDRB |= 0xff;
 }
 
-
-
 void Del::SetCouleurLumiere(Etat etat)
 {
-    if (etat == Etat::ETEINT)   
+    if (etat == Etat::ETEINT)
     {
-        PORTB = LUMIERE_ETEINTE;       
+        PORTB = LUMIERE_ETEINTE;
     }
     else if (etat == Etat::VERT)
     {
@@ -26,7 +24,7 @@ void Del::SetCouleurLumiere(Etat etat)
     }
     else if (etat == Etat::ROUGE)
     {
-        PORTB= LUMIERE_ROUGE;
+        PORTB = LUMIERE_ROUGE;
     }
 }
 

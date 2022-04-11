@@ -54,8 +54,7 @@ uint16_t obstacle()
 
 int main()
 {
-    DDRD = 0x00
-    DDRC = 0x00;
+    DDRD = 0x00 DDRC = 0x00;
     DDRB = 0xff;
     DDRA = 0x00;
 
@@ -76,7 +75,7 @@ int main()
             del.clignoter(4, LUMIERE_VERTE);
             switch (instruction)
             {
-                case Etat::DEBUTPARCOURS:
+            case Etat::DEBUTPARCOURS:
                 while (obstacle() < 430)
                 {
                     moteur.ajustementPwmNavigation(100, 100);
@@ -84,10 +83,10 @@ int main()
                 }
                 mur = true;
                 instruction = Etat::SUIVREMUR;
-                
+
                 break;
-            
-                case Etat::SUIVREMUR:
+
+            case Etat::SUIVREMUR:
                 while (mur)
                 {
                     moteur.ajustementPwmNavigation(100);
@@ -104,29 +103,25 @@ int main()
                     {
                         mur = false;
                         instruction = Etat::ATTENTE;
-
-
                     }
                     break;
                     //A la fin du mur, mettre mur = false
                 }
-                
-                
 
-                case Etat::ATTENTE:
-                while(capteur.lecture(0)) < 100)  // Mode Suivi Lumiere
-                {
-                    moteur.ajustementPWM(lumiereGauche, lumiereDroite);
-                    ; // METTRE CONDITION POUR DIFFERENTIER DROITE OU GAUCHE DANS LECRITURE
-                }
-                
-                while(capteur.lecture(2)) < 100)
-                {
-                    moteur.ajustementPWM(lumiereGauche, lumiereDroite); // METTRE CONDITION POUR DIFFERENTIER DROITE OU GAUCHE DANS LECRITURE
-                    m.ecriture(count++, TRG);
-                    _delay_ms(1000);
-                    m.ecriture(count++, ATT);
-                }
+            case Etat::ATTENTE:
+                while (capteur.lecture(0)) < 100)  // Mode Suivi Lumiere
+                    {
+                        moteur.ajustementPWM(lumiereGauche, lumiereDroite);
+                        ; // METTRE CONDITION POUR DIFFERENTIER DROITE OU GAUCHE DANS LECRITURE
+                    }
+
+                while (capteur.lecture(2)) < 100)
+                    {
+                        moteur.ajustementPWM(lumiereGauche, lumiereDroite); // METTRE CONDITION POUR DIFFERENTIER DROITE OU GAUCHE DANS LECRITURE
+                        m.ecriture(count++, TRG);
+                        _delay_ms(1000);
+                        m.ecriture(count++, ATT);
+                    }
                 instruction = Etat::SUIVREMUR;
 
                 if (b.appuiBouton(PA0)) // Mode Fin Parcours
@@ -134,32 +129,27 @@ int main()
                     finParcours = true;
                     instruction = Etat::FINPARCOURS;
                     break;
-
                 }
-                else if(b.appuiBouton(PA2)) // BOUTON BLANC MODE VIRAGE
-                {   
+                else if (b.appuiBouton(PA2)) // BOUTON BLANC MODE VIRAGE
+                {
                     finParcours = false;
                     instruction = Etat::MODETOURNER;
-                }                           
-
-                case Etat::FINPARCOURS:
-                    del.SetCouleurLumiere(Etat::ROUGE);
-                    m.ecriture(count++, TRG);
-                    del.SetCouleurLumiere(Etat::VERT);
-
-                if (b.appuiBouton(PA2))// Debut mode reprise
-                {
-                    m.lecture(); //Faire le mode reprise
-                }           
-            
-            
-                case Etat:: MODETOURNER:
-                {
-                    //AJUSTEMENRPWM AVEC VALEUR ET DELAY DU TEST 
                 }
 
-            
-            
+            case Etat::FINPARCOURS:
+                del.SetCouleurLumiere(Etat::ROUGE);
+                m.ecriture(count++, TRG);
+                del.SetCouleurLumiere(Etat::VERT);
+
+                if (b.appuiBouton(PA2)) // Debut mode reprise
+                {
+                    m.lecture(); //Faire le mode reprise
+                }
+
+            case Etat::MODETOURNER:
+            {
+                //AJUSTEMENRPWM AVEC VALEUR ET DELAY DU TEST
+            }
             }
         }
     }
