@@ -48,7 +48,7 @@ Bouton bouton;
 
 
 */
-/*
+
 const uint16_t MAX_CAN = 1024;
 
 //Appuyer sur un bouton
@@ -195,17 +195,20 @@ int main()
 //del.clignoter(4,LUMIERE_VERTE);
 
 // Test BOUTON:
-while (true)
-{
-    del.SetCouleurLumiere(Etat::ROUGE);
-    if (bouton.appuiBouton(PA4)) //mode reprise,   doit durer 3 secondes donc 6 clignotement avec des délais de 200 comme dans la classe
+    while (true)
     {
-        del.clignoter(15, LUMIERE_VERTE);
+        
+        if (bouton.appuiBouton(PA4)) //mode reprise,   doit durer 3 secondes donc 6 clignotement avec des délais de 200 comme dans la classe
+        {
+            del.clignoter(15, LUMIERE_VERTE);
+        }
+        else{
+            del.SetCouleurLumiere(Etat::ROUGE);
+        }
+        //      if (bouton.appuiBouton(PC4))  //mode reprise,   doit durer 3 secondes donc 6 clignotement avec des délais de 200 comme dans la classe
+        //     {
+        //         del.clignoter(15, LUMIERE_ROUGE);
+        //     }
+        //  }
     }
-    //      if (bouton.appuiBouton(PC4))  //mode reprise,   doit durer 3 secondes donc 6 clignotement avec des délais de 200 comme dans la classe
-    //     {
-    //         del.clignoter(15, LUMIERE_ROUGE);
-    //     }
-    //  }
-}
 }
