@@ -46,7 +46,7 @@ void Moteur::arret()
 
 void Moteur::ajustementPwmNavigation(uint16_t valRoueDroite, uint16_t valRoueGauche)
 {
-     PORTB = 0;
+    PORTB = 0;
 
     OCR0A = valRoueDroite; // comme on procede en pourcentage on devrait diviser par 100 vu que OCR0X= 255 est un rendement de 100%
     OCR0B =  valRoueGauche;
