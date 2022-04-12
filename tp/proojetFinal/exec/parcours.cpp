@@ -12,6 +12,7 @@
 #include <sonorite.h>
 #include <bouton.h>
 #include <can.h>
+#define UNE_SECONDE 1000
 
 Moteur moteur(PB5, PB6);
 Bouton bouton;
@@ -29,32 +30,26 @@ const uint16_t AVANCER_GAUCHE = 150;
 const uint16_t DISTANCE_20CM = 430;
 const uint16_t ABSENCE_MUR = 700;
 const uint16_t LUMIERE_FORTE = 700;
-const uint16_t lumiereDroite = obstacle.lecture(4); //photoresistance de droite lumiere.lecture(1)
-const uint16_t lumiereGauche = obstacle.lecture(1); //photoresistance de gauche  lumiere.lecture(4)
 
-const uint16_t DBT = 0x01;
-const uint16_t ATT = 0x02;
+const uint16_t CLIGNOTER = 0x02;
+const uint16_t ATTENDRE = 0x02;
 const uint16_t DAL = 0x44;
 const uint16_t DET = 0x45;
-const uint16_t SGO = 0x48;bouton.
-const uint16_t SAR = 0x09;
-const uint16_t MAR = 0x60;
-const uint16_t MAR_AUTRE = 0x61;
-const uint16_t MAV = 0x62;
-const uint16_t MRE = 0x63;
-const uint16_t TRD = 0x64;
-const uint16_t TRG = 0x65;
-const uint16_t DBC = 0xC0;
-const uint16_t FBC = 0xC1;
-const uint16_t FIN = 0xFF;
+const uint16_t ARRET = 0x60;
+const uint16_t ARRET_1 = 0x61;
+const uint16_t AVANCE = 0x62;
+const uint16_t TOURNE_DROITE = 0x64;
+const uint16_t TOURNE_GAUCHE = 0x65;
 
-    uint8_t count = 0;
-    uint8_t i = 0;
 
-    bool mur = false;
-    bool finParcours = false;
-    
-    Etat instruction = Etat::SUIVRE_MUR;
+uint8_t count = 0;
+uint8_t i = 0;
+
+bool mur = false;
+bool finParcours = false;
+bool reprise = false;
+
+Etat instruction = Etat::SUIVRE_MUR;
 
 enum class Etat
 {
@@ -67,6 +62,16 @@ enum class Etat
     FIN_PARCOURS
 };
 
+uint16_t lumiereDroite()
+{
+    return capteur.lecture(4); //photoresistance de droite lumiere.lecture(4)
+}
+
+uint16_t lumiereGauche()
+{
+    return capteur.lecture(1); //photoresistance de gauche lumiere.lecture(1)
+}
+
 uint16_t obstacle()
 {
     return capteur.lecture(7);
@@ -74,151 +79,192 @@ uint16_t obstacle()
 
 initialisation()
 {
-    DDRD = 0x00
     DDRC = 0x00;
+    DDRD = 0x00;
     DDRB = 0xff;
     DDRA = 0x00;
 }
 
-int main()
+void faireParcours()
 {
-    initialisation();    
-
-    
-    while (true)
+    del.clignoter(15, LUMIERE_VERTE);
+    while (!finParcours)
     {
-        if (bouton.appuiBouton(PA0))
-        { 
-            faireParcours();    
-        }
-    }
-
-    void faireParcours()
-    {
-        del.clignoter(15, LUMIERE_VERTE);
-        mur = true;
-                switch (instruction)
-                {
-                    case Etat::SUIVRE_MUR:
-                        suivreMur();
-                        break;
-
-                    case Etat::ATTENTE:
-                       
-                    case Etat::SUIVI_LUMIERE:
-                        while (capteur.lecture(0)) > LUMIERE_FORTE)  // Mode Suivi Lumiere
-                            {
-                                moteur.ajustementPWM(lumiereGauche, lumiereDroite);
-                                 // METTRE CONDITION POUR DIFFERENTIER DROITE OU GAUCHE DANS LECRITURE
-                            }
-
-                        while (capteur.lecture(2)) > LUMIERE_FORTE)
-                            {
-                                moteur.ajustementPWM(lumiereGauche, lumiereDroite); // METTRE CONDITION POUR DIFFERENTIER DROITE OU GAUCHE DANS LECRITURE
-                                memoireExterne.ecriture(count++, TRG);
-                                _delay_ms(1000);
-                                memoireExterne.ecriture(count++, ATT);
-                            }
-                        instruction = Etat::SUIVRE_MUR;
-                        break;
-                    }
-
-                    case Etat::MODE_TOURNER:
-                    {
-                        //AJUSTEMENRPWM AVEC VALEUR ET DELAY DU TEST
-                        moteur.ajustementPWM(DEMITOUR_DROIT, DEMITOUR_GAUCHE);
-
-                        instruction = Etat::SUIVRE_SANS_ENREGISTRER;
-                        break;
-                    }
-
-                    case Etat::SUIVRE_SANS_ENREGISTRER:
-                        while (mur)
-                        {
-                            moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE);
-                            memoireExterne.ecriture(count++, MAV);
-
-                            if (obstacle() > DISTANCE_20CM)
-                            {
-                                moteur.ajustementPwmNavigation(AJUSTEMENT_DROIT, AJUSTEMENT_GAUCHE);
-                                memoireExterne.ecriture(count++, TRG);
-                                _delay_ms(1000);
-                                memoireExterne.ecriture(count++, ATT);
-                            }
-                            else if (obstacle() > ABSENCE_MUR)
-                    {
-                        mur = false;
-                        instruction = Etat::FIN_PARCOURS;
-                    }
-                    break;
-                    //A la fin du mur, mettre mur = false
-            
-            case Etat::FIN_PARCOURS:
-                del.SetCouleurLumiere(Etat::ROUGE);
-                del.SetCouleurLumiere(Etat::VERT)
-                if (bouton.appuiBouton(PA2)) // Debut mode reprise
-                {
-                    del.clignoter(15, LUMIERE_ROUGE);
-                    memoireExterne..lecture(); //Faire le mode reprise
-                
-                if (bouton.appuiBouton(PA0)) // Debut mode parcours
-                {
-                    instruction = Etat::DEBUT_PARCOURS;
-                }
-                break;
-        }
-    }
-}   
-    
-    void suivreMur(Del del)
-    {
-        while (mur)
+        switch (instruction)
         {
-            if(obstacle() >= DISTANCE_20CM)
-            {
-                moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE);
-                memoireExterne.ecriture(count++, MAV);
-            }
+        case Etat::SUIVRE_MUR:
+            suivreMur();
+            break;
 
-            if (obstacle() < DISTANCE_20CM)
-            {
-                moteur.ajustementPwmNavigation(AJUSTEMENT_DROIT, AJUSTEMENT_GAUCHE);
-                memoireExterne.ecriture(count++, TRG);
-                _delay_ms(1000);
-                memoireExterne.ecriture(count++, ATT);
-            }
+        case Etat::ATTENTE:
+            attendre();
+            break;
+        case Etat::SUIVI_LUMIERE:
+            suivreLumiere();
+            break;
 
-            if (obstacle() > ABSENCE_MUR)
-            {
-                mur = false;
-                instruction = Etat::ATTENTE;
-                break;
-            }
+        case Etat::MODE_TOURNER:
+            demiTour();
+            break;
+
+        case Etat::SUIVRE_SANS_ENREGISTRER:
+            suivreUnique();
+            break;
+
+        case Etat::FIN_PARCOURS:
+            fin();
+            finParcours = !finParcours;
+            break;
         }
     }
+}
 
-    void attendre()
+void suivreMur()
+{
+    mur = true;
+    while (mur)
     {
-        if ((capteur.lecture(0) > LUMIERE_FORTE) || (capteur.lecture(2) > LUMIERE_FORTE ))  // Mode Suivi Lumiere
+        if (obstacle() >= DISTANCE_20CM)
         {
-            moteur.ajustementPWM(lumiereGauche, lumiereDroite);
-             // METTRE CONDITION POUR DIFFERENTIER DROITE OU GAUCHE DANS LECRITURE
-            instruction = Etat::SUIVI_LUMIERE;
+            moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE);
+            memoireExterne.ecriture(count++, AVANCE);
         }
+
+        if (obstacle() < DISTANCE_20CM)
+        {
+            moteur.ajustementPwmNavigation(AJUSTEMENT_DROIT, AJUSTEMENT_GAUCHE);
+            memoireExterne.ecriture(count++, TOURNE_GAUCHE);
+        }
+
+        if (obstacle() > ABSENCE_MUR)
+        {
+            mur = !mur;
+            instruction = Etat::ATTENTE;
+            break;
+        }
+    }
+}
+
+void attendre()
+{
+    signal = false;
+    while (!signal)
+    {
+        if (lumiereDroite() > LUMIERE_FORTE) || (lumiereGauche() > LUMIERE_FORTE)) // Mode Suivi Lumiere
+            {
+                // METTRE CONDITION POUR DIFFERENTIER DROITE OU GAUCHE DANS LECRITURE
+                instruction = Etat::SUIVI_LUMIERE;
+                signal = !signal;
+            }
 
         if (bouton.appuiBouton(PA0)) // Mode Fin Parcours
         {
             instruction = Etat::FIN_PARCOURS;
+            signal = !signal;
         }
 
         if (bouton.appuiBouton(PA2)) // BOUTON BLANC MODE TOURNER
         {
             finParcours = false;
             instruction = Etat::MODE_TOURNER;
+            signal = !signal;
         }
-
     }
+}
 
+void suivreLumiere()
+{
+    uint16_t gauche = lumiereGauche();
+    uint16_t droite = lumieredroite();
 
+    while (gauche > LUMIERE_FORTE || droite > LUMIERE_FORTE) // Mode Suivi Lumiere
+    {
+        moteur.ajustementPWM(gauche >> 2, droite >> 2);
 
+        if (droite > gauche)
+        {
+            memoireExterne.ecriture(count++, TOURNE_DROITE);
+        }
+        else
+        {
+            memoireExterne.ecriture(count++, TOURNE_GAUCHE);
+        }
+    }
+    instruction = Etat::SUIVRE_MUR;
+}
+
+void demiTour()
+{
+    //AJUSTEMENRPWM AVEC VALEUR ET DELAY DU TEST
+    moteur.ajustementPWM(DEMITOUR_DROIT, DEMITOUR_GAUCHE);
+    instruction = Etat::SUIVRE_SANS_ENREGISTRER;
+}
+
+void suivreUnique()
+{
+    mur = true;
+    while (mur)
+    {
+        moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE);
+        if (obstacle() > DISTANCE_20CM)
+        {
+            moteur.ajustementPwmNavigation(AJUSTEMENT_DROIT, AJUSTEMENT_GAUCHE);
+        }
+        else if (obstacle() > ABSENCE_MUR)
+        {
+            mur = !mur;
+            instruction = Etat::FIN_PARCOURS;
+        }
+    }
+}
+
+void fin()
+{
+    del.SetCouleurLumiere(Etat::ROUGE);
+    del.SetCouleurLumiere(Etat::VERT);
+    if (bouton.appuiBouton(PA2)) // Debut mode reprise
+    {
+        del.clignoter(15, LUMIERE_ROUGE);
+        modeReprise();
+        reprise = !reprise;
+    }
+    if (bouton.appuiBouton(PA0)) // Debut mode parcours
+    {
+        instruction = Etat::DEBUT_PARCOURS;
+    }
+}
+
+void modeReprise()
+{
+    uint16_t code = 0;
+    while (i <= count)
+    {
+        memoireExterne.lecture(i, &code);
+        i++;
+
+        switch (code)
+        {
+        case ATT:
+            _delay_ms(UNE_SECONDE);
+        case MAV:
+            moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE);
+        case TRG:
+            moteur.ajustementPwmNavigation(AJUSTEMENT_DROIT, AJUSTEMENT_GAUCHE);
+        case TRD:
+            moteur.ajustementPwmNavigation(AJUSTEMENT_GAUCHE, AJUSTEMENT_DROIT);
+        }
+    }
+}
+
+int main()
+{
+    initialisation();
+
+    while (true)
+    {
+        if (bouton.appuiBouton(PA0))
+        {
+            faireParcours();
+        }
+    }
 }
