@@ -48,6 +48,14 @@ const uint16_t DBC = 0xC0;
 const uint16_t FBC = 0xC1;
 const uint16_t FIN = 0xFF;
 
+    uint8_t count = 0;
+    uint8_t i = 0;
+
+    bool mur = false;
+    bool finParcours = false;
+    
+    Etat instruction = Etat::SUIVRE_MUR;
+
 enum class Etat
 {
     DEBUT_PARCOURS,
@@ -64,28 +72,24 @@ uint16_t obstacle()
     return capteur.lecture(7);
 }
 
-int main()
+initialisation()
 {
     DDRD = 0x00
     DDRC = 0x00;
     DDRB = 0xff;
     DDRA = 0x00;
+}
 
+int main()
+{
+    initialisation();    
 
-    
-    uint8_t count = 0;
-    uint8_t i = 0;
-
-    bool mur = false;
-    bool finParcours = false;
-    
-    Etat instruction = Etat::SUIVRE_MUR;
     
     while (true)
     {
         if (bouton.appuiBouton(PA0))
-        { faireParcours();
-            
+        { 
+            faireParcours();    
         }
     }
 
@@ -96,32 +100,11 @@ int main()
                 switch (instruction)
                 {
                     case Etat::SUIVRE_MUR:
+                        suivreMur();
                         break;
 
-                            //A la fin du mur, mettre mur = false
-
                     case Etat::ATTENTE:
-                        if ((capteur.lecture(0) > LUMIERE_FORTE) || (capteur.lecture(2) > LUMIERE_FORTE ))  // Mode Suivi Lumiere
-                        {
-                            moteur.ajustementPWM(lumiereGauche, lumiereDroite);
-                             // METTRE CONDITION POUR DIFFERENTIER DROITE OU GAUCHE DANS LECRITURE
-                            instruction = Etat::SUIVI_LUMIERE;
-                            break;
-                        }
-
-                        if (bouton.appuiBouton(PA0)) // Mode Fin Parcours
-                        {
-                            instruction = Etat::FIN_PARCOURS;
-                            break;
-                        }
-
-                        if (bouton.appuiBouton(PA2)) // BOUTON BLANC MODE TOURNER
-                        {
-                            finParcours = false;
-                            instruction = Etat::MODE_TOURNER;
-                            break;
-                        }
-
+                       
                     case Etat::SUIVI_LUMIERE:
                         while (capteur.lecture(0)) > LUMIERE_FORTE)  // Mode Suivi Lumiere
                             {
@@ -182,37 +165,60 @@ int main()
                 {
                     instruction = Etat::DEBUT_PARCOURS;
                 }
-                break
+                break;
         }
     }
 }   
     
-
-
-
-void suivreMur(Del del)
-{
-    while (mur)
+    void suivreMur(Del del)
     {
-        if(obstacle() >= DISTANCE_20CM)
+        while (mur)
         {
-            moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE);
-            memoireExterne.ecriture(count++, MAV);
+            if(obstacle() >= DISTANCE_20CM)
+            {
+                moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE);
+                memoireExterne.ecriture(count++, MAV);
+            }
 
-        if (obstacle() < DISTANCE_20CM)
-        {
-            moteur.ajustementPwmNavigation(AJUSTEMENT_DROIT, AJUSTEMENT_GAUCHE);
-            memoireExterne.ecriture(count++, TRG);
-            _delay_ms(1000);
-            memoireExterne.ecriture(count++, ATT);
-        }
+            if (obstacle() < DISTANCE_20CM)
+            {
+                moteur.ajustementPwmNavigation(AJUSTEMENT_DROIT, AJUSTEMENT_GAUCHE);
+                memoireExterne.ecriture(count++, TRG);
+                _delay_ms(1000);
+                memoireExterne.ecriture(count++, ATT);
+            }
 
-        if (obstacle() > ABSENCE_MUR)del.clignoter(15,)
-        {
-            mur = false;
-            instruction = Etat::ATTENTE;
-            break;
+            if (obstacle() > ABSENCE_MUR)
+            {
+                mur = false;
+                instruction = Etat::ATTENTE;
+                break;
+            }
         }
     }
+
+    void attendre()
+    {
+        if ((capteur.lecture(0) > LUMIERE_FORTE) || (capteur.lecture(2) > LUMIERE_FORTE ))  // Mode Suivi Lumiere
+        {
+            moteur.ajustementPWM(lumiereGauche, lumiereDroite);
+             // METTRE CONDITION POUR DIFFERENTIER DROITE OU GAUCHE DANS LECRITURE
+            instruction = Etat::SUIVI_LUMIERE;
+        }
+
+        if (bouton.appuiBouton(PA0)) // Mode Fin Parcours
+        {
+            instruction = Etat::FIN_PARCOURS;
+        }
+
+        if (bouton.appuiBouton(PA2)) // BOUTON BLANC MODE TOURNER
+        {
+            finParcours = false;
+            instruction = Etat::MODE_TOURNER;
+        }
+
+    }
+
+
 
 }
