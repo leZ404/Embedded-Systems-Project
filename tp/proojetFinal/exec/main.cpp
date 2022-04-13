@@ -70,31 +70,87 @@ int main()
     Memoire24CXXX m;
     Bouton b;
 
-    uint16_t lumiereDroite = obstacle.lecture(2) >> 2; //photoresistance de droite lumiere.lecture(1)
-    uint16_t lumiereGauche = obstacle.lecture(1) >> 2; //photoresistance de gauche  lumiere.lecture(4)
+    uint16_t lumiereDroite ; //photoresistance de droite lumiere.lecture(1)
+    uint16_t lumiereGauche ; //photoresistance de gauche  lumiere.lecture(4)
 
     //TEST PHOTORESISTANCE ET OBSTACLE
 
     while(true)
-    {
-// Fonction suivi lu;iere
-    //  moteur.ajustementPwmNavigation(170,200);         // roue gauche = roue droite * 0.85
-    //     _delay_ms(5000);
-    //   moteur.ajustementPwmNavigation(150,0);
-    //      _delay_ms(1500);
-        // p.afficherEntier8bit(obstacle.lecture(2)>>2);
-        // _delay_ms(500);
-        // p.afficherCaractere('\n');
+     {
+    //        lumiereDroite = (obstacle.lecture(2) >> 2) +20 ; //photoresistance de droite lumiere.lecture(1)
+    //         lumiereGauche = (obstacle.lecture(4) >> 2 ); //photoresistance de gauche  lumiere.lecture(4)
+    //           p.afficherCaractere('D');
+    //         p.afficherEntier8bit(lumiereDroite);
+    //         _delay_ms(500);
+    //         p.afficherCaractere('-');
+    //          p.afficherCaractere('G');
+    //          p.afficherEntier8bit(lumiereGauche);
+    //            p.afficherCaractere('\n');
+    //     while(obstacle.lecture(2) > 700 || obstacle.lecture(4) > 700)
+    //     {
 
-    //      //Test Suivi Lumiere
+    //         lumiereDroite = (obstacle.lecture(2) >> 2) +20 ; //photoresistance de droite lumiere.lecture(1)
+    //         lumiereGauche = (obstacle.lecture(4) >> 2 ); //photoresistance de gauche  lumiere.lecture(4)
+    //         moteur.ajustementPwmNavigation(lumiereGauche, lumiereDroite );         // roue gauche = roue droite * 0.85
+    //          p.afficherCaractere('D');
+    //         p.afficherEntier8bit(obstacle.lecture(2));
+    //         _delay_ms(500);
+    //         p.afficherCaractere('-');
+    //          p.afficherCaractere('G');
+    //          p.afficherEntier8bit(obstacle.lecture(4));
+    //            p.afficherCaractere('\n');
+    //     }
+    //     moteur.ajustementPwmNavigation(0, 0);   
+    // }
+   //   moteur.ajustementPwmNavigation(100, 100 );
+   //   _delay_ms(500000);
+      while(obstacle.lecture(7) > 220 && obstacle.lecture(7) < 270  )
+       {
+            moteur.ajustementPwmNavigation(100, 100 );
+            del.clignoter(4,LUMIERE_ROUGE);
+       }
+        while(obstacle.lecture(7) < 220 )
+       {
+            moteur.ajustementPwmNavigation(100, 150 );
+            del.SetCouleurLumiere(Etat::VERT);
+       }
+           
+       while(obstacle.lecture(7) > 270 )
+       {
+            moteur.ajustementPwmNavigation(140, 100 );
+            del.SetCouleurLumiere(Etat::ROUGE);
+       }
 
-    //   uint16_t lumiereDroite; //photoresistance de droite lumiere.lecture(1)
-    //  uint16_t lumiereGauche;//photoresistance de gauche  lumiere.lecture(4)
-//moteur.avancer(150);
-moteur.ajustementPwmNavigation(200, 200);
-_delay_ms(50000);
-    }
+     
+       
+       
+        // while(700 >obstacle.lecture(7) >430 )
+        // {
+
+        //     lumiereDroite = (obstacle.lecture(7) >> 2); //photoresistance de droite lumiere.lecture(1)
+        //     moteur.ajustementPwmNavigation(100, 85 );
+        //     _delay_ms(1250);
+        
+        // }
+        // while(obstacle.lecture(7)>700 )
+        // {
+        //     moteur.ajustementPwmNavigation(0, 0); 
+        // }  
+    
 }
+}
+
+//Demi TOUR
+//  while(obstacle.lecture(7)< 70 )
+//        {
+
+//          //   del.clignoter(4,LUMIERE_ROUGE);
+//            //lumiereDroite = (obstacle.lecture(7) >> 2); //photoresistance de droite lumiere.lecture(1)
+//            moteur.ajustementPwmNavigation(100, 140 );
+          
+
+//        }
+
 //Avancer tout droit
 //     while(obstacle.lecture(1) > 500 && obstacle.lecture(2) > 500))
 //     {
@@ -103,40 +159,8 @@ _delay_ms(50000);
 //         moteur.ajustementPwmNavigation(lumiereDroite, lumiereGauche)
              
 //     }>
-// //Virage leger a droite
-
-//         while(obstacle.lecture(1) < 400)
-//           {
-//             lumiereGauche =  (obstacle.lecture(1) >> 2) + 20;
-//             lumiereDroite=  (obstacle.lecture(2) >> 2) + 20;
-//               p.afficherCaractere('X');
-//                p.afficherEntier8bit(lumiereGauche);
-//              p.afficherCaractere('-');
-//             p.afficherEntier8bit(lumiereDroite);
-//             p.afficherCaractere('X');
-//              p.afficherCaractere('\n');
-//              _delay_ms(500);
-//          }
-//     }
-// }
 
 
-//    while(obstacle.lecture(1) > 500 && obstacle.lecture(2) > 500))
-//       {
-//         lumiereDroite=  (obstacle.lecture(2) >> 2) + 20;
-//         lumiereGauche =  (obstacle.lecture(2) >> 2) + 20;
-//         moteur.ajustementPwmNavigation(lumiereDroite, lumiereGauche);
-//              p.afficherEntier8bit(lumiereGauche);
-//              p.afficherCaractere('-');
-//             p.afficherEntier8bit(lumiereDroite);
-
-//              _delay_ms(500);
-//             // p.afficherCaractere('\n');
-//             // p.afficherEntier8bit(obstacle.lecture(2));
-//             // _delay_ms(500);
-//              p.afficherCaractere('\n');
-             
-//         }
 
     /*
      while(obstacle.lecture(1) > 100)
@@ -154,7 +178,7 @@ _delay_ms(50000);
 
 //moteur.ajustementPwmNavigation(100, 0);
 
-// // if ((obstacle.lecture(0)) > 430 )
+// // if ((obstacle.lecture(7)) > 430 )
 // // {
 // //     del.SetCouleurLumiere(Etat::ROUGE);
 // // }
@@ -172,7 +196,11 @@ _delay_ms(50000);
     
 
     _delay_ms(5000);
-     moteur.ajustementPwmNavigation(100,0);
+     moteur.aj{
+    initialisation();    
+
+    
+    whileustementPwmNavigation(100,0);
      p.afficherChaineCaractere("gauche");
       p.afficherCaractere('\n');
     
@@ -245,3 +273,11 @@ _delay_ms(50000);
 //         //  }
 //     }
 // }
+
+
+// case Etat::DEBUT_PARCOURS:
+//                         while (obstacle() < DISTANCE_20CM)
+//                         {
+//                             moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE);
+//                             memoireExterne.ecriture(count++, MAV);
+//                         }
