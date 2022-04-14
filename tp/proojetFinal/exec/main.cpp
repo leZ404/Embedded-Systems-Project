@@ -103,6 +103,11 @@ int main()
 }
 */
 
+can obstacle;
+ uint16_t lumiereDroite()
+ {return ((obstacle.lecture(3) >> 2)+20); } //photoresistance de droite lumiere.lecture(1) 
+ uint16_t lumiereGauche()
+ {return  obstacle.lecture(5) >> 2;} //photoresistance de gauche  lumiere.lecture(4)}
 
 const uint16_t MAX_CAN = 1024;
 
@@ -118,26 +123,70 @@ int main()
 Moteur moteur(PB5, PB6);
 Bouton bouton;
 //Infrarouge infrarouge;
-can obstacle;
+
 
  Del del ;
  Print p; 
  Memoire24CXXX m;
  Bouton b; 
 
- uint16_t lumiereDroite=  obstacle.lecture(1) >> 2;  //photoresistance de droite lumiere.lecture(1)
- uint16_t lumiereGauche =  obstacle.lecture(2) >> 2; //photoresistance de gauche  lumiere.lecture(4)
+
 
  
 //TEST PHOTORESISTANCE ET OBSTACLE
 bool mur = true;
 while(mur)
+
 {     
-    // // p.afficherEntier8bit(obstacle.lecture(2)>>2);
-    // // _delay_ms(500);
-    // // p.afficherCaractere('\n');
+        while( obstacle.lecture(7) > 220 &&  obstacle.lecture(7) < 270  )
+        {
+            moteur.ajustementPwmNavigation(100, 100 );
+            del.clignoter(4,LUMIERE_ROUGE);
+        }
+        
+        while( obstacle.lecture(7) < 220  &&  obstacle.lecture(7) > 120 )
+        {
+            moteur.ajustementPwmNavigation(100, 150 );
+            del.SetCouleurLumiere(Etat::VERT);
+        }
+           
+        while( obstacle.lecture(7) > 270 )
+        {
+            moteur.ajustementPwmNavigation(150, 100 );
+            del.SetCouleurLumiere(Etat::ROUGE);
+        }
+        
+        if (obstacle.lecture(7) < 120) 
+        {
+            mur = !mur;
+            moteur.ajustementPwmNavigation(0, 0 );
+            del.clignoter(15,LUMIERE_VERTE);
+            _delay_ms(10000);
+        }
+   
+
+//          while((lumiereDroite() > 180) || lumiereGauche() > 160)
+//          {
+
+//             //lumiereDroite = ((obstacle.lecture(3) >> 2) + 20); //photoresistance de droite lumiere.lecture(1) 
+//             //lumiereGauche = (obstacle.lecture(5) >> 2 ); //photoresistance de gauche  lumiere.lecture(4)    
+//             moteur.ajustementPwmNavigation(lumiereGauche(), lumiereDroite() );         // roue gauche = roue droite * 0.85  
+//              p.afficherCaractere('D');  
+//             p.afficherEntier8bit(lumiereDroite());  
+//             _delay_ms(500); 
+//             p.afficherCaractere('-');   
+//              p.afficherCaractere('G');  
+//              p.afficherEntier8bit(lumiereGauche()); 
+//                p.afficherCaractere('\n');
+
+
+//         }
+//  moteur.ajustementPwmNavigation(0,0);       
+    // p.afficherEntier8bit(obstacle.lecture(2)>>2);
+    // _delay_ms(500);
+    // p.afficherCaractere('\n');
     
-    //  //Test Suivi Lumiere
+     //Test Suivi Lumiere
 
     //  while(obstacle.lecture(0)) < 100)
     //  {
@@ -151,29 +200,29 @@ while(mur)
     //  }
 
      //Test mode Tourner
-    if (obstacle.lecture(7) < 120)
-            {
-                mur = !mur;
-                moteur.ajustementPwmNavigation(0,0);
-                _delay_ms(10000);
-                break;
-            }
-    while(obstacle.lecture(7) > 220 && obstacle.lecture(7) < 270  )
-       {
-            moteur.ajustementPwmNavigation(100, 100 );
-            del.clignoter(4,LUMIERE_ROUGE);
-       }
-        while(obstacle.lecture(7) < 220 )
-       {
-            moteur.ajustementPwmNavigation(100, 150 );
-            del.SetCouleurLumiere(Etat::VERT);
-       }
+    // if (obstacle.lecture(7) < 120)
+    //         {
+    //             mur = !mur;
+    //             moteur.ajustementPwmNavigation(0,0);
+    //             _delay_ms(10000);
+    //             break;
+    //         }
+    // while(obstacle.lecture(7) > 220 && obstacle.lecture(7) < 270  )
+    //    {
+    //         moteur.ajustementPwmNavigation(100, 100 );
+    //         del.clignoter(4,LUMIERE_ROUGE);
+    //    }
+    //     while(obstacle.lecture(7) < 220 )
+    //    {
+    //         moteur.ajustementPwmNavigation(100, 150 );
+    //         del.SetCouleurLumiere(Etat::VERT);
+    //    }
 
-       while(obstacle.lecture(7) > 270 )
-       {
-            moteur.ajustementPwmNavigation(140, 100 );
-            del.SetCouleurLumiere(Etat::ROUGE);
-       }
+    //    while(obstacle.lecture(7) > 270 )
+    //    {
+    //         moteur.ajustementPwmNavigation(140, 100 );
+    //         del.SetCouleurLumiere(Etat::ROUGE);
+    //    }
     
     //moteur.ajustementPwmNavigation(100, 0);
    

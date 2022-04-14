@@ -27,7 +27,8 @@ const uint16_t AVANCER_GAUCHE = 100;
 const uint16_t DISTANCE_20CM = 270;
 const uint16_t MUR_LOIN = 220;
 const uint16_t ABSENCE_MUR = 120;
-const uint16_t LUMIERE_FORTE = 700;
+const uint16_t LUMIERE_FORTE_DROITE = 180;
+const uint16_t LUMIERE_FORTE_GAUCHE = 160;
 
 const uint16_t CLIGNOTER = 0x02;
 const uint16_t ATTENDRE = 0x02;
@@ -122,12 +123,7 @@ void suivreMur()
     mur = true;
     while (mur)
     {
-        if (obstacle() < ABSENCE_MUR)
-            {
-                mur = !mur;
-                instruction = Etat::ATTENTE;
-                break;
-            }
+        
         while( obstacle() > MUR_LOIN &&  obstacle() < DISTANCE_20CM  )
         {
             moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE );
@@ -146,7 +142,12 @@ void suivreMur()
             del.SetCouleurLumiere(Etat::ROUGE);
         }
         
-        
+        if (obstacle() < ABSENCE_MUR) 
+        {
+            mur = !mur;
+            instruction = Etat::ATTENTE;
+            break;
+        }
    
     }
 }
@@ -183,20 +184,18 @@ void suivreLumiere()
     uint16_t gauche = lumiereGauche();
     uint16_t droite = lumieredroite();
 
-    while (gauche > LUMIERE_FORTE || droite > LUMIERE_FORTE) // Mode Suivi Lumiere
+    while (gauche > LUMIERE_FORTE_GAUCHE || droite > LUMIERE_FORTE_DROITE) // Mode Suivi Lumiere
     {
-        moteur.ajustementPWM(gauche >> 2, droite >> 2);
-
-        if (droite > gauche)
+        moteur.ajustementPwmNavigation(gauche, droite ); 
+        if ( obstacle() < ABSENCE_MUR )
         {
-            memoireExterne.ecriture(count++, TOURNE_DROITE);
-        }
-        else
-        {
-            memoireExterne.ecriture(count++, TOURNE_GAUCHE);
+            instruction = Etat::SUIVRE_MUR;
         }
     }
-    instruction = Etat::SUIVRE_MUR;
+    if ( obstacle() < ABSENCE_MUR )
+    {
+        instruction = Etat::SUIVRE_MUR;
+    }
 }
 
 void demiTour()
