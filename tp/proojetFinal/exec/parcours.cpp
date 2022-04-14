@@ -122,6 +122,12 @@ void suivreMur()
     mur = true;
     while (mur)
     {
+        if (obstacle() < ABSENCE_MUR)
+            {
+                mur = !mur;
+                instruction = Etat::ATTENTE;
+                break;
+            }
         while( obstacle() > MUR_LOIN &&  obstacle() < DISTANCE_20CM  )
         {
             moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE );
@@ -140,12 +146,8 @@ void suivreMur()
             del.SetCouleurLumiere(Etat::ROUGE);
         }
         
-        if (obstacle() < ABSENCE_MUR)
-        {
-            mur = !mur;
-            instruction = Etat::ATTENTE;
-            break;
-        }
+        
+   
     }
 }
 
