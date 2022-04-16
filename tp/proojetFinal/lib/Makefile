@@ -29,7 +29,7 @@ PROJECTNAME= libtest
 # Utilisez le suffixe .cpp pour les fichiers C++
 # Listez tous les fichiers a compiler, separes par
 # un espace. exemple: 'tp1.c tp2.cpp':
-PRJSRC= MoteurRoueDroite.cpp MoteurRoueGauche.cpp print.cpp memoire_24.cpp can.cpp bouton.cpp DEL.cpp debug.cpp sonorite.cpp moteur.cpp
+PRJSRC= print.cpp memoire_24.cpp can.cpp bouton.cpp DEL.cpp moteur.cpp
 
 # Inclusions additionnels (ex: -I/path/to/mydir)
 INC=

@@ -75,24 +75,24 @@ int main()
 
     //TEST PHOTORESISTANCE ET OBSTACLE
 
-    while(true)
+    while (true)
     {
-// Fonction suivi lu;iere
-    //  moteur.ajustementPwmNavigation(170,200);         // roue gauche = roue droite * 0.85
-    //     _delay_ms(5000);
-    //   moteur.ajustementPwmNavigation(150,0);
-    //      _delay_ms(1500);
+        // Fonction suivi lu;iere
+        //  moteur.ajustementPwmNavigation(170,200);         // roue gauche = roue droite * 0.85
+        //     _delay_ms(5000);
+        //   moteur.ajustementPwmNavigation(150,0);
+        //      _delay_ms(1500);
         // p.afficherEntier8bit(obstacle.lecture(2)>>2);
         // _delay_ms(500);
         // p.afficherCaractere('\n');
 
-    //      //Test Suivi Lumiere
+        //      //Test Suivi Lumiere
 
-    //   uint16_t lumiereDroite; //photoresistance de droite lumiere.lecture(1)
-    //  uint16_t lumiereGauche;//photoresistance de gauche  lumiere.lecture(4)
-//moteur.avancer(150);
-moteur.ajustementPwmNavigation(200, 200);
-_delay_ms(50000);
+        //   uint16_t lumiereDroite; //photoresistance de droite lumiere.lecture(1)
+        //  uint16_t lumiereGauche;//photoresistance de gauche  lumiere.lecture(4)
+        //moteur.avancer(150);
+        moteur.ajustementPwmNavigation(200, 200);
+        _delay_ms(50000);
     }
 }
 //Avancer tout droit
@@ -101,11 +101,11 @@ _delay_ms(50000);
 //         lumiereDroite=  (obstacle.lecture(2) >> 2) + 20;
 //         lumiereGauche =  (obstacle.lecture(2) >> 2) + 20;
 //         moteur.ajustementPwmNavigation(lumiereDroite, lumiereGauche)
-             
+
 //     }>
 // //Virage leger a droite
 
-//         while(obstacle.lecture(1) < 400)
+//         while(obstacle.lecture(0) < 400)
 //           {
 //             lumiereGauche =  (obstacle.lecture(1) >> 2) + 20;
 //             lumiereDroite=  (obstacle.lecture(2) >> 2) + 20;
@@ -119,7 +119,6 @@ _delay_ms(50000);
 //          }
 //     }
 // }
-
 
 //    while(obstacle.lecture(1) > 500 && obstacle.lecture(2) > 500))
 //       {
@@ -135,10 +134,10 @@ _delay_ms(50000);
 //             // p.afficherEntier8bit(obstacle.lecture(2));
 //             // _delay_ms(500);
 //              p.afficherCaractere('\n');
-             
+
 //         }
 
-    /*
+/*
      while(obstacle.lecture(1) > 100)
      {
          moteur.ajustementPwmNavigation(lumiereGauche, lumiereDroite);
@@ -213,7 +212,6 @@ _delay_ms(50000);
 //         //  }
 //     }
 // }
-
 
 // {
 //   //  p.afficherEntier8bit(obstacle.lecture(7)>>2);
