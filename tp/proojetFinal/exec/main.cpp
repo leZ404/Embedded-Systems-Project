@@ -138,31 +138,31 @@ bool mur = true;
  while(mur)
 
  {     
-//         while( obstacle.lecture(7) > 220 &&  obstacle.lecture(7) < 270  )
-//         {
-//             moteur.ajustementPwmNavigation(100, 100 );
-//             del.clignoter(4,LUMIERE_ROUGE);
-//         }
+        while( obstacle.lecture(7) > 220 &&  obstacle.lecture(7) < 270  )
+        {
+            moteur.ajustementPwmNavigation(100, 100 );
+            del.clignoter(4,LUMIERE_ROUGE);
+        }
         
-//         while( obstacle.lecture(7) < 220  &&  obstacle.lecture(7) > 120 )
-//         {
-//             moteur.ajustementPwmNavigation(100, 150 );
-//             del.SetCouleurLumiere(Etat::VERT);
-//         }
+        while( obstacle.lecture(7) < 220 )// &&  obstacle.lecture(7) > 120 )
+        {
+            moteur.ajustementPwmNavigation(100, 130 );
+            del.SetCouleurLumiere(Etat::VERT);
+        }
            
-//         while( obstacle.lecture(7) > 270 )
-//         {
-//             moteur.ajustementPwmNavigation(150, 100 );
-//             del.SetCouleurLumiere(Etat::ROUGE);
-//         }
+        while( obstacle.lecture(7) > 270 )
+        {
+            moteur.ajustementPwmNavigation(150, 100 );
+            del.SetCouleurLumiere(Etat::ROUGE);
+        }
         
-//         if (obstacle.lecture(7) < 120) 
-//         {
-//             mur = !mur;
-//             moteur.ajustementPwmNavigation(0, 0 );
-//             del.clignoter(15,LUMIERE_VERTE);
-//             _delay_ms(10000);
-//         }
+        // if (obstacle.lecture(7) < 120) 
+        // {
+        //     mur = !mur;
+        //     moteur.ajustementPwmNavigation(0, 0 );
+        //     del.clignoter(15,LUMIERE_VERTE);
+        //     _delay_ms(10000);
+        // }
 
 //   p.afficherCaractere('D');  
 //             p.afficherEntier8bit(lumiereDroite());  
@@ -171,45 +171,69 @@ bool mur = true;
 //              p.afficherCaractere('G');  
 //              p.afficherEntier8bit(lumiereGauche()); 
 //                p.afficherCaractere('\n');
-//  moteur.ajustementPwmNavigation(lumiereGauche() , lumiereDroite() +50 );         // roue gauche = roue droite * 0.85  
-             p.afficherCaractere('D');  
-            p.afficherEntier8bit(lumiereDroite());  
-          //  _delay_ms(500); 
-            p.afficherCaractere('-');   
-             p.afficherCaractere('G');  
-             p.afficherEntier8bit(lumiereGauche()); 
-               p.afficherCaractere('\n');
+// //  moteur.ajustementPwmNavigation(lumiereGauche() , lumiereDroite() +50 );         // roue gauche = roue droite * 0.85  
+//              p.afficherCaractere('D');  
+//             p.afficherEntier8bit(lumiereDroite());  
+//            _delay_ms(500); 
+//             p.afficherCaractere('-');   
+//              p.afficherCaractere('G');  
+//              p.afficherEntier8bit(lumiereGauche()); 
+//                p.afficherCaractere('\n');
 
-         while((lumiereDroite() > 150) )//|| lumiereGauche() > 110)
-         {
+//                 while (lumiereGauche()>130)
+//             {
 
-           // lumiereDroite = ((obstacle.lecture(3) >> 2) + 20); //photoresistance de droite lumiere.lecture(1) 
+//                 moteur.ajustementPwmNavigation(lumiereGauche() +70, lumiereDroite()-40);    
+//                    p.afficherCaractere('D');  
+//             p.afficherEntier8bit(lumiereDroite());  
+//            _delay_ms(500); 
+//             p.afficherCaractere('-');   
+//              p.afficherCaractere('G');  
+//              p.afficherEntier8bit(lumiereGauche()); 
+//                p.afficherCaractere('\n');
+//             }
+
+//          while((lumiereDroite() > 150) && lumiereGauche() > 120)
+//          {
+//                 p.afficherCaractere('D');  
+//             p.afficherEntier8bit(lumiereDroite());  
+//             moteur.ajustementPwmNavigation(lumiereGauche() +20, lumiereDroite()); 
+//            _delay_ms(500); 
+//             p.afficherCaractere('-');   
+//              p.afficherCaractere('G');  
+//              p.afficherEntier8bit(lumiereGauche()); 
+//                p.afficherCaractere('\n');
+
+//            // lumiereDroite = ((obstacle.lecture(3) >> 2) + 20); //photoresistance de droite lumiere.lecture(1) 
             
-            //umiereGauche = (obstacle.lecture(5) >> 2 ); //photoresistance de gauche  lumiere.lecture(4)    
-            while (lumiereDroite()>180)
-            {
+//             //umiereGauche = (obstacle.lecture(5) >> 2 ); //photoresistance de gauche  lumiere.lecture(4)    
+//             while (lumiereDroite()>200 && lumiereDroite()> 180 )
+//             {
 
-                moteur.ajustementPwmNavigation(lumiereGauche(), lumiereDroite());    
-            }
+//                 moteur.ajustementPwmNavigation(lumiereGauche() -50, lumiereDroite());    
+//                    p.afficherCaractere('D');  
+//             p.afficherEntier8bit(lumiereDroite());  
+//           //  _delay_ms(500); 
+//             p.afficherCaractere('-');   
+//              p.afficherCaractere('G');  
+//              p.afficherEntier8bit(lumiereGauche()); 
+//                p.afficherCaractere('\n');
+//             }
 
-             while (lumiereGauche()>120)
-            {
+            
 
-                moteur.ajustementPwmNavigation(lumiereGauche() +80, lumiereDroite()-50);    
-            }
-
-            moteur.ajustementPwmNavigation(lumiereGauche() +20, lumiereDroite());         // roue gauche = roue droite * 0.85  
-             p.afficherCaractere('D');  
-            p.afficherEntier8bit(lumiereDroite());  
-       //     _delay_ms(500); 
-            p.afficherCaractere('-');   
-             p.afficherCaractere('G');  
-             p.afficherEntier8bit(lumiereGauche()); 
-               p.afficherCaractere('\n');
+//                 // roue gauche = roue droite * 0.85  
+//              p.afficherCaractere('D');  
+//             p.afficherEntier8bit(lumiereDroite());  
+//          _delay_ms(500); 
+//             p.afficherCaractere('-');   
+//              p.afficherCaractere('G');  
+//              p.afficherEntier8bit(lumiereGauche()); 
+//                p.afficherCaractere('\n');
 
 
-         }
-          moteur.ajustementPwmNavigation(0, 0 );    
+        //  }
+        //   moteur.ajustementPwmNavigation(0, 0 );    
             
 //  moteur.ajustementPwmNavigation(0,0);       
     // p.afficherEntier8bit(obstacle.lecture(2)>>2);

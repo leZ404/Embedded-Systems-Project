@@ -186,7 +186,25 @@ void suivreLumiere()
 
     while (gauche > LUMIERE_FORTE_GAUCHE || droite > LUMIERE_FORTE_DROITE) // Mode Suivi Lumiere
     {
-        moteur.ajustementPwmNavigation(gauche, droite ); 
+        while (lumiereGauche()>140)
+        {
+
+            moteur.ajustementPwmNavigation(lumiereGauche() +70, lumiereDroite()-40);    
+            
+        }
+
+        while((lumiereDroite() > 180) && lumiereGauche() > 150)
+        { 
+            moteur.ajustementPwmNavigation(lumiereGauche() +20, lumiereDroite()); 
+        }
+
+        while (lumiereDroite()>190 && lumiereDroite()> 170 )
+        {
+           moteur.ajustementPwmNavigation(lumiereGauche() -50, lumiereDroite());    
+        }   
+
+        moteur.ajustementPwmNavigation(0, 0 );
+            
         if ( obstacle() < ABSENCE_MUR )
         {
             instruction = Etat::SUIVRE_MUR;
