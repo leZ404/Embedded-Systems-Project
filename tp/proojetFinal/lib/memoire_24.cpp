@@ -27,7 +27,7 @@
 
 #ifndef F_CPU
 /* fournir un avertissement mais non une erreur */
-# warning "F_CPU pas defini pour 'memoire_24.cpp'"
+//# warning "F_CPU pas defini pour 'memoire_24.cpp'"
 # define F_CPU 8000000UL
 #endif
 
@@ -277,7 +277,7 @@ uint8_t Memoire24CXXX::lecture(const uint16_t adresse, uint8_t *donnee,
       if (longueur == 1)
          twcr = _BV(TWINT) | _BV(TWEN);  // Derniere donnee, NACK
       TWCR = twcr;                       // R. a Z., interrupt. - Depart de transm.
-      while ((TWCR & _BV(TWINT)) == 0) ; // Attente de fin de transmission
+      while ((TWCR & _BV(TWINT)) == 0)// Attente de fin de transmission
          *donnee++ = TWDR;               // Lecture
   }
 

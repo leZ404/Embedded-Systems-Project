@@ -19,4 +19,5 @@ bool Bouton::appuiBouton(uint8_t pinBouton)
         }
         return false;
     }
+    return false;
 }
