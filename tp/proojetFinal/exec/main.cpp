@@ -14,6 +14,13 @@
 #include <can.h>
 
 /*
+/*Boucle de démarrage:
+Bouton Interrupt pour le mode parcours, bouton blanc pour le mode reprise. Lorsqu'un bouton est appuyé, 
+le choix est confirmé à l'aide de la DEL libre. Elle devra clignoter à 5 Hz pendant 3 secondes. 
+En vert pour le mode suivi, en rouge pour le mode reprise.
+Le robot ne fait rien d'autre pendant le clignotement. Une fois ce dernier terminé, le robot passe au mode d'opération choisi.
+/*
+
 
 //routine d'interruption<s
 volatile bool bouttonappuie = false;
@@ -40,6 +47,9 @@ void initialisationInt0()
 }
 
 
+
+/Fin Boucle de démarrage:/
+
 /avancement des roues en fonction des photoresistance
 
 //Appuyer sur un bouton
@@ -47,14 +57,10 @@ Del del;
 Bouton bouton;
 
 
-*/
 
-const uint16_t MAX_CAN = 1024;
-
-//Appuyer sur un bouton
-
-int main()
+void clignoter(uint8_t nbFois, const int lumiere)
 {
+<<<<<<< HEAD
     DDRC = 0x00;
     DDRB = 0xff;
     DDRA = 0x00;
@@ -145,45 +151,229 @@ int main()
                   p.afficherEntier8bit(lumiereGauche);
                 p.afficherCaractere('\n');
                  p.afficherEntier8bit(lumiereDroite);
-
-
+=======
+    for (int i = 0; i < nbFois; i++)
+    {
+        PORTB = lumiere;
+        _delay_ms(250);
+        PORTB = 0x00;
+        _delay_ms(250);
     }
+}
+
+>>>>>>> 2975e3bf94c8935d76972ebed41edeca9d72118a
+
+
+int main()
+{
+    
+    while (true)
+    {
+        //Boucle de démarrage, Mode Suivi:
+        if (bouton.appuiBouton(PA0))
+        {
+            del.clignoter(15, LUMIERE_VERTE);
+        }
+        //Fin Boucle demarrage, Mode Suivi
+
+        initialisationInt0();
+        //Boucle de démarrage, Mode reprise:
+        if (bouttonappuie == true && compteur < 120)
+        {
+            compteur++;
+            _delay_ms(100); // 1/10 secondes , t = 0 compteur=1 --> t= 0.1secondes compteur= 1
+            del.clignoter(15, LUMIERE_ROUGE);
+        }
+
+
+        // //Boucle de démarrage, Mode Reprise
+        //  if (bouton.appuiBouton(PA0))
+        // {
+            
+        // }
+    }
+   
+}
 */
-//Test mode Tourner
 
-//moteur.ajustementPwmNavigation(100, 0);
+can obstacle;
+ uint16_t lumiereDroite()
+ {return ((obstacle.lecture(3) >> 2)+20); } //photoresistance de droite lumiere.lecture(1) 
+ uint16_t lumiereGauche()
+ {return  obstacle.lecture(5) >> 2;} //photoresistance de gauche  lumiere.lecture(4)}
 
-// // if ((obstacle.lecture(0)) > 430 )
-// // {
-// //     del.SetCouleurLumiere(Etat::ROUGE);
-// // }
-// // else
-// // {
-// //     del.SetCouleurLumiere(Etat::VERT);
-// // }
+const uint16_t MAX_CAN = 1024;
 
-/*
-    moteur.ajustementPwmNavigation(220,100);
-    _delay_ms(5000);
-     moteur.ajustementPwmNavigation(0,100);
-     p.afficherChaineCaractere("droite ");
-         p.afficherCaractere('\n');
+//Appuyer sur un bouton 
+
+int main()
+{
+    DDRC = 0x00;
+    DDRB = 0xff;
+    DDRA= 0x00;
+    DDRD = 0x00;
+
+Moteur moteur(PB5, PB6);
+Bouton bouton;
+//Infrarouge infrarouge;
+
+
+ Del del ;
+ Print p; 
+ Memoire24CXXX m;
+ Bouton b; 
+
+
+
+ 
+//TEST PHOTORESISTANCE ET OBSTACLE
+bool mur = true;
+ while(mur)
+
+ {     
+        while( obstacle.lecture(7) > 220 &&  obstacle.lecture(7) < 270  )
+        {
+            moteur.ajustementPwmNavigation(100, 100 );
+            del.clignoter(4,LUMIERE_ROUGE);
+        }
+        
+        while( obstacle.lecture(7) < 220 )// &&  obstacle.lecture(7) > 120 )
+        {
+            moteur.ajustementPwmNavigation(100, 130 );
+            del.SetCouleurLumiere(Etat::VERT);
+        }
+           
+        while( obstacle.lecture(7) > 270 )
+        {
+            moteur.ajustementPwmNavigation(150, 100 );
+            del.SetCouleurLumiere(Etat::ROUGE);
+        }
+        
+        // if (obstacle.lecture(7) < 120) 
+        // {
+        //     mur = !mur;
+        //     moteur.ajustementPwmNavigation(0, 0 );
+        //     del.clignoter(15,LUMIERE_VERTE);
+        //     _delay_ms(10000);
+        // }
+
+//   p.afficherCaractere('D');  
+//             p.afficherEntier8bit(lumiereDroite());  
+//             _delay_ms(500); 
+//             p.afficherCaractere('-');   
+//              p.afficherCaractere('G');  
+//              p.afficherEntier8bit(lumiereGauche()); 
+//                p.afficherCaractere('\n');
+// //  moteur.ajustementPwmNavigation(lumiereGauche() , lumiereDroite() +50 );         // roue gauche = roue droite * 0.85  
+//              p.afficherCaractere('D');  
+//             p.afficherEntier8bit(lumiereDroite());  
+//            _delay_ms(500); 
+//             p.afficherCaractere('-');   
+//              p.afficherCaractere('G');  
+//              p.afficherEntier8bit(lumiereGauche()); 
+//                p.afficherCaractere('\n');
+
+//                 while (lumiereGauche()>130)
+//             {
+
+//                 moteur.ajustementPwmNavigation(lumiereGauche() +70, lumiereDroite()-40);    
+//                    p.afficherCaractere('D');  
+//             p.afficherEntier8bit(lumiereDroite());  
+//            _delay_ms(500); 
+//             p.afficherCaractere('-');   
+//              p.afficherCaractere('G');  
+//              p.afficherEntier8bit(lumiereGauche()); 
+//                p.afficherCaractere('\n');
+//             }
+
+//          while((lumiereDroite() > 150) && lumiereGauche() > 120)
+//          {
+//                 p.afficherCaractere('D');  
+//             p.afficherEntier8bit(lumiereDroite());  
+//             moteur.ajustementPwmNavigation(lumiereGauche() +20, lumiereDroite()); 
+//            _delay_ms(500); 
+//             p.afficherCaractere('-');   
+//              p.afficherCaractere('G');  
+//              p.afficherEntier8bit(lumiereGauche()); 
+//                p.afficherCaractere('\n');
+
+//            // lumiereDroite = ((obstacle.lecture(3) >> 2) + 20); //photoresistance de droite lumiere.lecture(1) 
+            
+//             //umiereGauche = (obstacle.lecture(5) >> 2 ); //photoresistance de gauche  lumiere.lecture(4)    
+//             while (lumiereDroite()>200 && lumiereDroite()> 180 )
+//             {
+
+//                 moteur.ajustementPwmNavigation(lumiereGauche() -50, lumiereDroite());    
+//                    p.afficherCaractere('D');  
+//             p.afficherEntier8bit(lumiereDroite());  
+//           //  _delay_ms(500); 
+//             p.afficherCaractere('-');   
+//              p.afficherCaractere('G');  
+//              p.afficherEntier8bit(lumiereGauche()); 
+//                p.afficherCaractere('\n');
+//             }
+
+            
+
+//                 // roue gauche = roue droite * 0.85  
+//              p.afficherCaractere('D');  
+//             p.afficherEntier8bit(lumiereDroite());  
+//          _delay_ms(500); 
+//             p.afficherCaractere('-');   
+//              p.afficherCaractere('G');  
+//              p.afficherEntier8bit(lumiereGauche()); 
+//                p.afficherCaractere('\n');
+
+
+        //  }
+        //   moteur.ajustementPwmNavigation(0, 0 );    
+            
+//  moteur.ajustementPwmNavigation(0,0);       
+    // p.afficherEntier8bit(obstacle.lecture(2)>>2);
+    // _delay_ms(500);
+    // p.afficherCaractere('\n');
     
+     //Test Suivi Lumiere
 
-    _delay_ms(5000);
-     moteur.ajustementPwmNavigation(100,0);
-     p.afficherChaineCaractere("gauche");
-      p.afficherCaractere('\n');
+    //  while(obstacle.lecture(0)) < 100)
+    //  {
+    //      moteur.ajustementPWM(lumiereGauche, lumiereDroite);
+
+    //  }
+    //  while(obstacle.lecture(1)) < 100)
+    //  {
+    //      moteur.ajustementPWM(lumiereGauche, lumiereDroite);
+
+    //  }
+
+     //Test mode Tourner
+    // if (obstacle.lecture(7) < 120)
+    //         {
+    //             mur = !mur;
+    //             moteur.ajustementPwmNavigation(0,0);
+    //             _delay_ms(10000);
+    //             break;
+    //         }
+    // while(obstacle.lecture(7) > 220 && obstacle.lecture(7) < 270  )
+    //    {
+    //         moteur.ajustementPwmNavigation(100, 100 );
+    //         del.clignoter(4,LUMIERE_ROUGE);
+    //    }
+    //     while(obstacle.lecture(7) < 220 )
+    //    {
+    //         moteur.ajustementPwmNavigation(100, 150 );
+    //         del.SetCouleurLumiere(Etat::VERT);
+    //    }
+
+    //    while(obstacle.lecture(7) > 270 )
+    //    {
+    //         moteur.ajustementPwmNavigation(140, 100 );
+    //         del.SetCouleurLumiere(Etat::ROUGE);
+    //    }
     
-
-    _delay_ms(5000);
-     moteur.ajustementPwmNavigation(-200,-200);
-        _delay_ms(5000);
-        moteur.reculer(90);
-
-    */
-//moteur.ajustementPwmNavigation(100, 0);
-
+    //moteur.ajustementPwmNavigation(100, 0);
+   
+    
 //      if(obstacle.lecture(3) > 1020)
 //     {
 //   //p.afficherEntier8bit(obstacle.lecture(7)>>2);
@@ -191,7 +381,13 @@ int main()
 //    moteur.ajustementPwmNavigation(100, 0);
 //     _delay_ms(500);
 //     }
+ 
+   
+   // moteur.ajustementPwmNavigation(150, 150);
+    //  p.afficherEntier8bit(obstacle.lecture(8)>>2);
+    //  p.afficherCaractere('\n');
 
+<<<<<<< HEAD
 // moteur.ajustementPwmNavigation(150, 150);
 //  p.afficherEntier8bit(obstacle.lecture(8)>>2);
 //  p.afficherCaractere('\n');
@@ -212,6 +408,9 @@ int main()
 //         //  }
 //     }
 // }
+=======
+// if(obstacle.lecture(7) > 430)
+>>>>>>> 2975e3bf94c8935d76972ebed41edeca9d72118a
 
 // {
 //   //  p.afficherEntier8bit(obstacle.lecture(7)>>2);
@@ -220,26 +419,34 @@ int main()
 //     _delay_ms(500);
 // }
 
+}
 //_delay_ms(20000);
 
 //del.SetCouleurLumiere(Etat::ROUGE);
 //_delay_ms(20000);
 //del.clignoter(4,LUMIERE_VERTE);
 
+ 
+  
+
+   
+
+
+
 // Test BOUTON:
-//     while (true)
+// while(true)
+// {
+//     del.SetCouleurLumiere(Etat::ROUGE);
+//     // if (bouton.appuiBouton(PC5))  //mode reprise,   doit durer 3 secondes donc 6 clignotement avec des délais de 200 comme dans la classe
+//     // {
+//     //     del.clignoter(15, LUMIERE_VERTE);
+//     // }
+//      if (bouton.appuiBouton(PC4))  //mode reprise,   doit durer 3 secondes donc 6 clignotement avec des délais de 200 comme dans la classe
 //     {
-//         if (bouton.appuiBouton(PA4)) //mode reprise,   doit durer 3 secondes donc 6 clignotement avec des délais de 200 comme dans la classe
-//         {
-//             del.clignoter(15, LUMIERE_VERTE);
-//         }
-//         else{
-//             del.SetCouleurLumiere(Etat::ROUGE);
-//         }
-//         //      if (bouton.appuiBouton(PC4))  //mode reprise,   doit durer 3 secondes donc 6 clignotement avec des délais de 200 comme dans la classe
-//         //     {
-//         //         del.clignoter(15, LUMIERE_ROUGE);
-//         //     }
-//         //  }
+//         del.clignoter(15, LUMIERE_ROUGE);
 //     }
-// }
+//  }
+
+
+
+}

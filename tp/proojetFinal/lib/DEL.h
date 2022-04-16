@@ -33,6 +33,7 @@ public:
 // clignoter au rythme de 2 fois par secondes
 
     void clignoter(uint8_t nbFois, const uint8_t Couleurlumiere);
+    void ambrer(uint8_t nbFois);
 
 
 };

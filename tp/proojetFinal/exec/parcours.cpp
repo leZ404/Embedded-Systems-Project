@@ -21,6 +21,7 @@ Del del;
 Print print;
 Memoire24CXXX memoireExterne;
 
+<<<<<<< HEAD
 const uint16_t AJUSTEMENT_DROIT = 145;
 const uint16_t AJUSTEMENT_GAUCHE = 110;
 const uint16_t DEMITOUR_DROIT = 100;
@@ -33,6 +34,26 @@ const uint16_t ABSENCE_MUR = 270;
 const uint16_t LUMIERE_FORTE = 700;
 const uint8_t DELAY_MEMOIRE = 5;
 const uint8_t ARRET = 0;
+=======
+const uint16_t AJUSTEMENT = 150;
+const uint16_t AVANCER_DROIT = 100;
+const uint16_t AVANCER_GAUCHE = 100;
+const uint16_t DISTANCE_20CM = 270;
+const uint16_t MUR_LOIN = 220;
+const uint16_t ABSENCE_MUR = 120;
+const uint16_t LUMIERE_FORTE_DROITE = 180;
+const uint16_t LUMIERE_FORTE_GAUCHE = 160;
+
+const uint16_t CLIGNOTER = 0x02;
+const uint16_t ATTENDRE = 0x02;
+const uint16_t DAL = 0x44;
+const uint16_t DET = 0x45;
+const uint16_t ARRET = 0x60;
+const uint16_t ARRET_1 = 0x61;
+const uint16_t AVANCE = 0x62;
+const uint16_t TOURNE_DROITE = 0x64;
+const uint16_t TOURNE_GAUCHE = 0x65;
+>>>>>>> 2975e3bf94c8935d76972ebed41edeca9d72118a
 
 
 uint8_t count = 0;
@@ -123,6 +144,7 @@ void suivreMur()
     mur = true;
     while (mur)
     {
+<<<<<<< HEAD
         while (obstacle() > DISTANCE_20CM && obstacle() < TROP_PROCHE)
         {
             moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE);
@@ -145,6 +167,28 @@ void suivreMur()
         }
 
         if (obstacle() < ABSENCE_MUR)
+=======
+        
+        while( obstacle() > MUR_LOIN &&  obstacle() < DISTANCE_20CM  )
+        {
+            moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE );
+            del.clignoter(4,LUMIERE_ROUGE);
+        }
+        
+        while( obstacle() < MUR_LOIN  &&  obstacle() > ABSENCE_MUR )
+        {
+            moteur.ajustementPwmNavigation(AVANCER_DROIT, AJUSTEMENT );
+            del.SetCouleurLumiere(Etat::VERT);
+        }
+           
+        while( obstacle() > DISTANCE_20CM )
+        {
+            moteur.ajustementPwmNavigation(AJUSTEMENT, AVANCER_GAUCHE );
+            del.SetCouleurLumiere(Etat::ROUGE);
+        }
+        
+        if (obstacle() < ABSENCE_MUR) 
+>>>>>>> 2975e3bf94c8935d76972ebed41edeca9d72118a
         {
             moteur.ajustementPwmNavigation(ARRET, ARRET);
             ecriture(ARRET);
@@ -153,6 +197,7 @@ void suivreMur()
             instruction = Etat::ATTENTE;
             break;
         }
+   
     }
 }
 
@@ -188,8 +233,9 @@ void suivreLumiere()
     uint16_t gauche = lumiereGauche();
     uint16_t droite = lumieredroite();
 
-    while (gauche > LUMIERE_FORTE || droite > LUMIERE_FORTE) // Mode Suivi Lumiere
+    while (gauche > LUMIERE_FORTE_GAUCHE || droite > LUMIERE_FORTE_DROITE) // Mode Suivi Lumiere
     {
+<<<<<<< HEAD
         moteur.ajustementPWM(gauche >> 2, droite >> 2);
     }
     instruction = Etat::SUIVRE_MUR;
@@ -207,13 +253,63 @@ void suivreLumiere()
          }
 
          moteur.ajustementPwmNavigation(0, 0 );
+=======
+        while (lumiereGauche()>140)
+        {
+
+            moteur.ajustementPwmNavigation(lumiereGauche() +70, lumiereDroite()-40);    
+            
+        }
+
+        while((lumiereDroite() > 180) && lumiereGauche() > 150)
+        { 
+            moteur.ajustementPwmNavigation(lumiereGauche() +20, lumiereDroite()); 
+        }
+
+        while (lumiereDroite()>190 && lumiereDroite()> 170 )
+        {
+           moteur.ajustementPwmNavigation(lumiereGauche() -50, lumiereDroite());    
+        }   
+
+        moteur.ajustementPwmNavigation(0, 0 );
+            
+        if ( obstacle() < ABSENCE_MUR )
+        {
+            instruction = Etat::SUIVRE_MUR;
+        }
+    }
+    if ( obstacle() < ABSENCE_MUR )
+    {
+        instruction = Etat::SUIVRE_MUR;
+    }
+>>>>>>> 2975e3bf94c8935d76972ebed41edeca9d72118a
 }
 
 void demiTour()
 {
     //AJUSTEMENRPWM AVEC VALEUR ET DELAY DU TEST
+<<<<<<< HEAD
     while (obstacle() 
     moteur.ajustementPWM(DEMITOUR_DROIT, DEMITOUR_GAUCHE);
+=======
+      while( obstacle() > ABSENCE_MUR &&  obstacle() < DISTANCE_20CM  )
+        {
+            moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE );
+            del.ambrer(10)
+        }
+        
+        while( obstacle() < ABSENCE_MUR )
+        {
+            moteur.ajustementPwmNavigation(AVANCER_DROIT, AJUSTEMENT );
+            del.ambrer(10)
+        }
+           
+        while( obstacle() > DISTANCE_20CM )
+        {
+            moteur.ajustementPwmNavigation(AJUSTEMENT, AVANCER_GAUCHE );
+            del.ambrer(10)
+        }
+>>>>>>> 2975e3bf94c8935d76972ebed41edeca9d72118a
     instruction = Etat::SUIVRE_SANS_ENREGISTRER;
 }
 
@@ -222,10 +318,19 @@ void suivreUnique()
     mur = true;
     while (mur)
     {
-        moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE);
-        if (obstacle() > DISTANCE_20CM)
+       while( obstacle() > ABSENCE_MUR &&  obstacle() < DISTANCE_20CM  )
         {
-            moteur.ajustementPwmNavigation(AJUSTEMENT_DROIT, AJUSTEMENT_GAUCHE);
+            moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE );
+        }
+        
+        while( obstacle() < ABSENCE_MUR )
+        {
+            moteur.ajustementPwmNavigation(AVANCER_DROIT, AJUSTEMENT );
+        }
+           
+        while( obstacle() > DISTANCE_20CM )
+        {
+            moteur.ajustementPwmNavigation(AJUSTEMENT, AVANCER_GAUCHE );
         }
         else if (obstacle() > ABSENCE_MUR)
         {
