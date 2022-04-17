@@ -23,17 +23,16 @@ Memoire24CXXX memoireExterne;
 
 const uint16_t AJUSTEMENT_DROIT = 145;
 const uint16_t AJUSTEMENT_GAUCHE = 110;
-const uint16_t DEMITOUR_DROIT = 100;
-const uint16_t DEMITOUR_GAUCHE = 200;
+const uint16_t DEMITOUR_DROIT = 90;
+const uint16_t DEMITOUR_GAUCHE = 155;
 const uint16_t AVANCER_DROIT = 110;
 const uint16_t AVANCER_GAUCHE = 110;
 const uint16_t DISTANCE_20CM = 350;
 const uint16_t TROP_PROCHE = 400;
 const uint16_t ABSENCE_MUR = 270;
-const uint16_t LUMIERE_FORTE = 700;
+const uint16_t LUMIERE_FORTE = 165;
 const uint8_t DELAY_MEMOIRE = 5;
 const uint8_t ARRET = 0;
-
 
 uint8_t count = 0;
 uint8_t i = 0;
@@ -41,6 +40,7 @@ uint8_t i = 0;
 bool mur = false;
 bool finParcours = false;
 bool reprise = false;
+bool signal = false;
 
 Etat instruction = Etat::SUIVRE_MUR;
 
@@ -57,12 +57,12 @@ enum class Etat
 
 uint16_t lumiereDroite()
 {
-    return capteur.lecture(4); //photoresistance de droite lumiere.lecture(4)
+    return (capteur.lecture(3)); //photoresistance de droite lumiere.lecture(4)
 }
 
 uint16_t lumiereGauche()
 {
-    return capteur.lecture(1); //photoresistance de gauche lumiere.lecture(1)
+    return (capteur.lecture(4); //photoresistance de gauche lumiere.lecture(1)
 }
 
 uint16_t obstacle()
@@ -78,10 +78,10 @@ void ecriture(uint16_t pwm)
 
 initialisation()
 {
-    DDRC = 0x00;
-    DDRD = 0x00;
-    DDRB = 0xff;
-    DDRA = 0x00;
+    DDRC |= 0x00;
+    DDRD |= 0x00;
+    DDRB |= 0xff;
+    DDRA |= 0x00;
 }
 
 void faireParcours()
@@ -153,16 +153,15 @@ void suivreMur()
             instruction = Etat::ATTENTE;
             break;
         }
-   
     }
 }
 
 void attendre()
 {
-    signal = false;
+
     while (!signal)
     {
-        if (lumiereDroite() > LUMIERE_FORTE) || (lumiereGauche() > LUMIERE_FORTE)) // Mode Suivi Lumiere
+        if ((lumiereDroite() + 20) > LUMIERE_FORTE) || ((lumiereGauche()+20) > LUMIERE_FORTE)) // Mode Suivi Lumiere
             {
                 // METTRE CONDITION POUR DIFFERENTIER DROITE OU GAUCHE DANS LECRITURE
                 instruction = Etat::SUIVI_LUMIERE;
@@ -189,32 +188,34 @@ void suivreLumiere()
     uint16_t gauche = lumiereGauche();
     uint16_t droite = lumieredroite();
 
-    while (gauche > LUMIERE_FORTE_GAUCHE || droite > LUMIERE_FORTE_DROITE) // Mode Suivi Lumiere
+    while (lumiereDroite() > LUMIERE_FORTE || lumiereGauche() > LUMIERE_FORTE)
     {
-        moteur.ajustementPWM(gauche >> 2, droite >> 2);
+        p.afficherCaractere('D');
+        p.afficherEntier8bit(lumiereDroite());
+        moteur.ajustementPwmNavigation(lumiereGauche(), lumiereDroite());
+
+        p.afficherCaractere('-');
+        p.afficherCaractere('G');
+        p.afficherEntier8bit(lumiereGauche());
+        p.afficherCaractere('\n');
     }
-    instruction = Etat::SUIVRE_MUR;
 
-    while(lumiereDroite() > 165 || lumiereGauche() > 165)
-         {
-                p.afficherCaractere('D');
-            p.afficherEntier8bit(lumiereDroite());
-            moteur.ajustementPwmNavigation(lumiereGauche(), lumiereDroite()); 
-          // _delay_ms(500); 
-            p.afficherCaractere('-');
-             p.afficherCaractere('G');
-             p.afficherEntier8bit(lumiereGauche()); 
-               p.afficherCaractere('\n');
-         }
+    if (obstacle() > TROP_PROCHE)
+    {
+        instruction = Etat::SUIVI_LUMIERE;
+    }
 
-         moteur.ajustementPwmNavigation(0, 0 );
+    moteur.ajustementPwmNavigation(0, 0);
 }
 
 void demiTour()
 {
     //AJUSTEMENRPWM AVEC VALEUR ET DELAY DU TEST
-    while (obstacle() 
-    moteur.ajustementPWM(DEMITOUR_DROIT, DEMITOUR_GAUCHE);
+    while (obstacle() < ABSENCE_MUR)
+    {
+        moteur.ajustementPWM(DEMITOUR_DROIT, DEMITOUR_GAUCHE);
+    }
+
     instruction = Etat::SUIVRE_SANS_ENREGISTRER;
 }
 
@@ -223,21 +224,27 @@ void suivreUnique()
     mur = true;
     while (mur)
     {
-       while( obstacle() > ABSENCE_MUR &&  obstacle() < DISTANCE_20CM  )
+        while (obstacle() > DISTANCE_20CM && obstacle() < TROP_PROCHE)
         {
-            moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE );
+            moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE);
+            ecriture(AVANCER_DROIT);
+            ecriture(AVANCER_GAUCHE);
         }
-        
-        while( obstacle() < ABSENCE_MUR )
+
+        while (obstacle() > TROP_PROCHE)
         {
-            moteur.ajustementPwmNavigation(AVANCER_DROIT, AJUSTEMENT );
+            moteur.ajustementPwmNavigation(AJUSTEMENT_DROIT, AJUSTEMENT_GAUCHE);
+            ecriture(AJUSTEMENT_DROIT);
+            ecriture(AJUSTEMENT_GAUCHE);
         }
-           
-        while( obstacle() > DISTANCE_20CM )
+
+        while (obstacle() < DISTANCE_20CM && obstacle() > ABSENCE_MUR)
         {
-            moteur.ajustementPwmNavigation(AJUSTEMENT, AVANCER_GAUCHE );
+            moteur.ajustementPwmNavigation(AJUSTEMENT_GAUCHE, AJUSTEMENT_DROIT);
+            ecriture(AJUSTEMENT_GAUCHE);
+            ecriture(AJUSTEMENT_DROIT);
         }
-        else if (obstacle() > ABSENCE_MUR)
+        if (obstacle() > ABSENCE_MUR)
         {
             mur = !mur;
             instruction = Etat::FIN_PARCOURS;
@@ -252,7 +259,7 @@ void fin()
     if (bouton.appuiBouton(PA2)) // Debut mode reprise
     {
         del.clignoter(15, LUMIERE_ROUGE);
-        modeReprise();
+        //modeReprise();
         reprise = !reprise;
     }
     if (bouton.appuiBouton(PA0)) // Debut mode parcours
