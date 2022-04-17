@@ -20,11 +20,10 @@ enum class Mode
     ATTENTE,
     MODE_TOURNER,
     SUIVI_LUMIERE,
-    SUIVRE_SANS_ENREGISTRER,
     FIN_PARCOURS
 };
 
-Mode instruction = Mode::SUIVRE_MUR;
+Mode instruction = Mode::DEBUT_PARCOURS;
 
 Moteur moteur(PB5, PB6);
 Bouton bouton;
@@ -86,6 +85,17 @@ void initialisation()
     DDRD |= 0x00;
     DDRB |= 0xff;
     DDRA |= 0x00;
+}
+
+void debutParcours()
+{
+    del.clignoter(15, LUMIERE_VERTE);
+    while (obstacle()  < ABSENCE_MUR)
+    {
+        del.SetCouleurLumiere(Etat::ROUGE);
+        moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE);
+    }
+    instruction = Mode::SUIVRE_MUR;
 }
 
 void suivreMur()
@@ -208,12 +218,17 @@ void faireParcours()
 {
     Print p;
     bool finParcours = false;
-    del.clignoter(15, LUMIERE_VERTE);
+    del.clignoter(15, LUMIERE_ROUGE);
     while (!finParcours)
     {
 
         switch (instruction)
         {
+        case Mode::DEBUT_PARCOURS:
+            debutParcours();
+
+            break;
+
         case Mode::SUIVRE_MUR:
             p.afficherChaineCaractere("suivre mur--");
             pulsePwm();
@@ -261,6 +276,7 @@ int main()
         {
             faireParcours();
         }
+
         if (bouton.appuiBouton(PD4))
         {
             modeReprise();
