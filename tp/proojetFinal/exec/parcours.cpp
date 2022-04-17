@@ -53,6 +53,12 @@ bool mur = true;
 bool reprise = false;
 bool signal = false;
 
+void pulsePwm()
+{
+    moteur.ajustementPwmNavigation(200, 200);
+    _delay_ms(200);
+}
+
 uint16_t lumiereDroite()
 {
     return ((capteur.lecture(3) >> 2) + PRECISION); //photoresistance de droite lumiere.lecture(4)
@@ -170,12 +176,9 @@ void demiTour()
     while ((obstacle() <= DISTANCE_20CM))
     {
         moteur.ajustementPwmNavigation(DEMITOUR_DROIT, DEMITOUR_GAUCHE);
-        
     }
     instruction = Mode::SUIVRE_MUR;
-    
 }
-
 
 void fin()
 {
@@ -213,12 +216,14 @@ void faireParcours()
         {
         case Mode::SUIVRE_MUR:
             p.afficherChaineCaractere("suivre mur--");
+            pulsePwm();
             suivreMur();
 
             break;
 
         case Mode::ATTENTE:
             p.afficherChaineCaractere("attendre--");
+
             attendre();
 
             break;
@@ -229,6 +234,7 @@ void faireParcours()
             break;
 
         case Mode::MODE_TOURNER:
+            pulsePwm();
             p.afficherChaineCaractere("demitour--");
             demiTour();
             p.afficherChaineCaractere("demitour-fait");
@@ -237,7 +243,7 @@ void faireParcours()
 
         case Mode::FIN_PARCOURS:
             fin();
-            finParcours = finParcours;
+            finParcours = !finParcours;
             p.afficherChaineCaractere("finParcours--");
 
             break;
