@@ -29,11 +29,11 @@ Identification:
 
 | Points importants                                                           | Poids      |
 | --------------------------------------------------------------------------- | ---------- |
-| Explications cohérentes par rapport au code retenu pour former la librairie | (0.0/2.0)     |
-| Explications cohérentes par rapport aux Makefiles modifiés                  | (0.0/2.0)     |
-| Explications claires avec un bon niveau de détails                          | (0.0/2.0)     |
-| Bon français                                                                | (0.0/1.0)     |
-| __Résultat partiel__                                                        | __(0.0/7.0)__ |
+| Explications cohérentes par rapport au code retenu pour former la librairie | (2.0/2.0)     |
+| Explications cohérentes par rapport aux Makefiles modifiés                  | (2.0/2.0)     |
+| Explications claires avec un bon niveau de détails                          | (2.0/2.0)     |
+| Bon français                                                                | (1.0/1.0)     |
+| __Résultat partiel__                                                        | __(7.0/7.0)__ |
 
 # GÉNÉRALITÉS
 ## Bonne soumission de l'ensemble du code et du rapport selon le format demandé 
@@ -52,7 +52,7 @@ Identification:
 
 # Résultat
 
-__Total des points: 8.5/20__
+__Total des points: 15.5/20__
 
 # Commentaires du correcteur:
 
