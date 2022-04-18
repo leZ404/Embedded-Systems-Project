@@ -7,7 +7,7 @@
 #include <util/delay.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <memoire_24.h>
+#include "memoire_24.h"
 #include <Moteur.h>
 #include <DEL.h>
 #include <sonorite.h>
@@ -24,7 +24,6 @@ Bouton bouton;
 Moteur moteur(PB3, PB4);
 Print p;
 can can;
-Memoire24CXXX m;
 
 //variable globale
 volatile bool dbt = false;
@@ -87,58 +86,31 @@ void retirerInt0()
     EICRA = 0x00;
 }
 
-void testMemoire()
-{
-    uint8_t instruction = 0;
-    bool reprise = false;
-    initialisationInt0();
-    del.SetCouleurLumiere(Etat::VERT);
-    while (true)
-    {
-        if (dbt)
-        {
-            //mode parcours
-            //retirerInt0(); //Retirer interrupt pour laisser en mode parcours
-
-            del.clignoter(15, LUMIERE_VERTE);
-            m.ecriture(1, DAL);
-            _delay_ms(1000);
-            del.SetCouleurLumiere(Etat::VERT);
-            _delay_ms(1000);
-            dbt = !dbt;
-
-            reprise = !reprise;
-        }
-
-        if (reprise)
-        {
-            m.lecture(1, &instruction);
-            if (instruction == DAL)
-            {
-                del.SetCouleurLumiere(Etat::ROUGE);
-            }
-            else
-            {
-                del.SetCouleurLumiere(Etat::ETEINT);
-            }
-        }
-    }
-}
 //Test de l'ecriture et lecture des instructions en memoire
 
 //Concepte de notre code
 int main()
+
 {
-    uint8_t instruction = 0;
-    uint8_t compteurInstruction = 0;
-    uint8_t addresse = 0;
 
-    if (dbt)
-    {
-        //Parcours de suivi de mur
-    }
-
-    /*
-        Parcours de reprise
-    */
+    Memoire24CXXX memoire;
+    uint16_t adresseMemoire = 0;
+    uint8_t donne = 0;
+    memoire.ecriture(0, donne++);
+    _delay_ms(5);
+    p.afficherChaineCaractere("Ecriture fait");
+    
+    memoire.lecture(adresseMemoire, &donne);
+    _delay_ms(5);
+    p.afficherChaineCaractere("Lecture fait");
+    p.afficherEntier8bit(donne);
 }
+
+// uint8_t tableau[255];
+
+// for (uint8_t i = 0 ; i < 255 ; i++)
+// {
+
+// }
+
+// moteur.ajustementPwmNavigation(100,100);
