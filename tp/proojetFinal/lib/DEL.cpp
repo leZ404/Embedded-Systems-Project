@@ -40,14 +40,12 @@ void Del::clignoter(uint8_t nbFois, const uint8_t Couleurlumiere)
     }
 }
 
-void Del::ambrer(uint8_t nbFois)
+void Del::ambrer()
 {
-    for (uint8_t i = 0; i < nbFois; i++)
-    {
-        PORTB = LUMIERE_ROUGE;
-        _delay_ms( DELAIS_AMBRER);
-        PORTB = LUMIERE_VERTE;
-        _delay_ms( DELAIS_AMBRER);
-    }
+    PORTB = LUMIERE_ROUGE;
+    _delay_ms( DELAIS_AMBRER);
+    PORTB = LUMIERE_VERTE;
+    _delay_ms( DELAIS_AMBRER);
+
 }
 

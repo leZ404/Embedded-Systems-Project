@@ -23,7 +23,18 @@ enum class Mode
     FIN_PARCOURS
 };
 
+enum class Code
+{
+    AVANCER,
+    ATTENDRE,
+    TOURNER_GAUCHE,
+    TOURNER_DROITE
+};
+
+
+
 Mode instruction = Mode::DEBUT_PARCOURS;
+Code enregistrer = Code::ATTENDRE;
 
 Moteur moteur(PB5, PB6);
 Bouton bouton;
@@ -46,10 +57,9 @@ const uint8_t DELAY_MEMOIRE = 5;
 const uint8_t ARRET = 0;
 const uint8_t PRECISION = 20;
 
-uint16_t count = 0;
+uint16_t count = 0x00;
 uint16_t i = 0;
 bool mur = true;
-bool reprise = false;
 bool signal = false;
 
 void pulsePwm()
@@ -86,6 +96,18 @@ void initialisation()
     DDRB |= 0xff;
     DDRA |= 0x00;
 }
+
+// ISR(TIMER2_COMPA_vect)
+// {
+//     if (Mode == Etat::SUIVRE_MUR)
+//         memoireExterne.ecriture();
+//     else if (Mode == Etat::SUIVI_LUMIERE)
+//         memoireExterne.ecriture();
+//     else if (Mode == Etat::FIN_PARCOURS)
+//         memoireExterne.ecriture()
+// }
+
+
 
 void debutParcours()
 {
@@ -128,6 +150,13 @@ void suivreMur()
 
             mur = !mur;
             instruction = Mode::ATTENTE;
+        }
+
+        if (bouton.appuiBouton(PD0))
+        {
+            mur = !mur;
+            instruction = Mode::FIN_PARCOURS;
+            del.SetCouleurLumiere(Etat::ROUGE);
         }
     }
 }
@@ -182,9 +211,10 @@ void suivreLumiere()
 void demiTour()
 {
     //AJUSTEMENRPWM AVEC VALEUR ET DELAY DU TEST
-    del.SetCouleurLumiere(Etat::ROUGE);
+    
     while ((obstacle() <= DISTANCE_20CM))
     {
+        del.ambrer();
         moteur.ajustementPwmNavigation(DEMITOUR_DROIT, DEMITOUR_GAUCHE);
     }
     instruction = Mode::SUIVRE_MUR;
@@ -205,13 +235,40 @@ void fin()
     }
 }
 
+
 void modeReprise()
 {
-    uint16_t *code;
+    del.clignoter(15, LUMIERE_ROUGE);
+    uint8_t reprise;
     while (i <= count)
     {
+        memoireExterne.lecture(i, &reprise);
         i++;
+
+        switch (enregistrer)
+        {
+        case Code::ATTENDRE:
+            _delay_ms(UNE_SECONDE);
+        case Code::AVANCER:
+            pulsePwm();
+            moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE);
+        case Code::TOURNER_GAUCHE:
+            pulsePwm();
+            moteur.ajustementPwmNavigation(AJUSTEMENT_DROIT, AJUSTEMENT_GAUCHE);
+        case Code::TOURNER_DROITE:
+            pulsePwm();
+            moteur.ajustementPwmNavigation(AJUSTEMENT_GAUCHE, AJUSTEMENT_DROIT);
+        }
     }
+    del.SetCouleurLumiere(Etat::VERT);
+    _delay_ms(10000);
+
+}
+
+void ecrire(uint8_t pwm)
+{
+    memoireExterne.ecriture(count++, pwm);
+    _delay_ms(DELAY_MEMOIRE);
 }
 
 void faireParcours()
@@ -264,6 +321,8 @@ void faireParcours()
             break;
         }
     }
+    del.SetCouleurLumiere(Etat::ROUGE);
+    _delay_ms(10000);
 }
 
 int main()

@@ -45,8 +45,8 @@ et meme apres avoir essayer beaucoup de methodes, les charges non plus n'ont pas
 
 uint16_t addresseInitiale = 0x00;
 const uint16_t DBT = 0x01;
-const uint16_t ATT = 0x02;
-const uint16_t DAL = 0x44;
+const uint16_t ATT = 0x44;
+const uint16_t DAL = 0x02;
 const uint16_t DET = 0x45;
 const uint16_t SGO = 0x48;
 const uint16_t SAR = 0x09;
