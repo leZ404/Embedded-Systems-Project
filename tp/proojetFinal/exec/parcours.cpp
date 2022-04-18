@@ -220,13 +220,32 @@ void demiTour()
     instruction = Mode::SUIVRE_MUR;
 }
 
+
+void finParcours()
+{
+
+    if (bouton.appuiBouton(PD4)) // Debut mode reprise
+    {
+            del.SetCouleurLumiere(Etat::ROUGE);
+
+
+    }
+    if (bouton.appuiBouton(PD4)) // Debut mode parcours
+    {
+        instruction = Mode::DEBUT_PARCOURS;
+        del.clignoter(5, LUMIERE_VERTE);
+    }
+}
+
+
+
 void fin()
 {
 
     if (bouton.appuiBouton(PD0)) // Debut mode reprise
     {
         del.clignoter(15, LUMIERE_ROUGE);
-        //modeReprise();
+
     }
     if (bouton.appuiBouton(PD4)) // Debut mode parcours
     {
@@ -295,7 +314,6 @@ void faireParcours()
 
         case Mode::ATTENTE:
             p.afficherChaineCaractere("attendre--");
-
             attendre();
 
             break;
@@ -306,6 +324,7 @@ void faireParcours()
             break;
 
         case Mode::MODE_TOURNER:
+            _delay_ms(UNE_SECONDE);
             pulsePwm();
             p.afficherChaineCaractere("demitour--");
             demiTour();
