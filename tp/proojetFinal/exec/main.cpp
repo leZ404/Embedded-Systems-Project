@@ -214,15 +214,16 @@ int main()
     while (mur)
 
     {
-        p.afficherCaractere('D');
-        p.afficherEntier8bit(lumiereDroite());
+        // p.afficherCaractere('D');
+        // p.afficherEntier8bit(lumiereDroite());
         //moteur.ajustementPwmNavigation(lumiereGauche() + 20, lumiereDroite());
-        
-        p.afficherCaractere('-');
-        p.afficherCaractere('G');
-        p.afficherEntier8bit(lumiereGauche());
-        p.afficherCaractere('\n');
-        _delay_ms(500);
+        //del.clignoter(15, LUMIERE_ROUGE);
+        // p.afficherCaractere('-');
+        // p.afficherCaractere('G');
+        // p.afficherEntier8bit(lumiereGauche());
+        // p.afficherCaractere('\n');
+        del.ambrer();
+      
     }
 }
 

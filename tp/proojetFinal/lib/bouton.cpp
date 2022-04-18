@@ -10,10 +10,10 @@ bool Bouton::appuiBouton(uint8_t pinBouton)
 
     const uint8_t DELAIS_ANTIREBOND = 10;
 
-    if (PIND & (1 << pinBouton))
+    if (PINC & (1 << pinBouton))
     {
         _delay_ms(DELAIS_ANTIREBOND);
-        if (PIND & (1 << pinBouton))
+        if (PINC & (1 << pinBouton))
         { // traitement de l'anti-rebond dans la fonction.
             return true;
         }

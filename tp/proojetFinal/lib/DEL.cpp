@@ -1,5 +1,5 @@
-
 #include <avr/io.h>
+#define F_CPU 8000000U
 #include <util/delay.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,10 +42,10 @@ void Del::clignoter(uint8_t nbFois, const uint8_t Couleurlumiere)
 
 void Del::ambrer()
 {
-    PORTB = LUMIERE_ROUGE;
-    _delay_ms( DELAIS_AMBRER);
     PORTB = LUMIERE_VERTE;
     _delay_ms( DELAIS_AMBRER);
+    PORTB = LUMIERE_ROUGE;
+   _delay_ms( DELAIS_AMBRER);
 
 }
 
