@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <print.h>
-#include <avr/eeprom.h> 
+#include <avr/eeprom.h>
 
 Print::Print() // constructeur
 {
@@ -15,12 +15,12 @@ void Print::USART_Init()
 {
 
     UBRR0H = 0;
+
     UBRR0L = 0xCF;
 
-    UCSR0A = 0;
-    UCSR0B |= (1 << RXEN0) | (1 << TXEN0);
+    UCSR0B = (1 << RXEN0) | (1 << TXEN0);
 
-    UCSR0C |= (1 << UCSZ11) | (1 << UCSZ10);
+    UCSR0C = (1 << USBS0) | (3 << UCSZ00);
 }
 
 void Print::afficherCaractere(const char donnees)
