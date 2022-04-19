@@ -22,7 +22,6 @@
 Del del;
 Bouton bouton;
 Moteur moteur(PB3, PB4);
-Print p;
 can can;
 
 //variable globale
@@ -92,18 +91,39 @@ void retirerInt0()
 int main()
 
 {
-
-    Memoire24CXXX memoire;
     uint16_t adresseMemoire = 0;
     uint8_t donne = 0;
-    memoire.ecriture(0, donne++);
+    Memoire24CXXX memoire;
+    Print p = Print();
+
+    uint8_t pwmG = 255;
+    uint8_t pwmD = 255;
+
+    uint8_t i = 0;
+
+    moteur.ajustementPwmNavigation(pwmG,pwmD);
+    _delay_ms(3000);
+
+    memoire.ecriture(i++, pwmG);
     _delay_ms(5);
-    p.afficherChaineCaractere("Ecriture fait");
+    memoire.ecriture(i++, pwmD);
+    _delay_ms(5);
+
+    moteur.ajustementPwmNavigation(0,0);
+
+    _delay_ms(3000);
+
+    uint8_t j = 0;
+    uint8_t temp1 = 0;
+    uint8_t temp2 = 0;
+    memoire.lecture(j++, &temp1);
+    _delay_ms(5);
+    memoire.lecture(j++, &temp2);
+    _delay_ms(5);
+
+    moteur.ajustementPwmNavigation(temp1, temp2);
+
     
-    memoire.lecture(adresseMemoire, &donne);
-    _delay_ms(5);
-    p.afficherChaineCaractere("Lecture fait");
-    p.afficherEntier8bit(donne);
 }
 
 // uint8_t tableau[255];
