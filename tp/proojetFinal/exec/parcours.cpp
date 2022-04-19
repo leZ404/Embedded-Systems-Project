@@ -24,6 +24,10 @@ enum class Mode
 };
 
 Mode instruction = Mode::DEBUT_PARCOURS;
+/****************************************************************************
+ * Declaration des instances et constantes .
+ ****************************************************************************/
+
 Moteur moteur(PB5, PB6);
 Bouton bouton;
 can capteur;
@@ -54,6 +58,15 @@ bool mur = true;
 bool enregistrement = true;
 bool signal = false;
 
+/****************************************************************************
+ * Fonction:    ecriture()
+ * Description: Ecrit dans l'EPROM les instruction exectées par le robot lors
+                du mode parcours.
+ * Paramètres:  uint16_t
+ * Retour:      Aucun
+ ****************************************************************************/
+
+
 void ecriture(uint8_t pwm)
 {
     if (enregistrement)
@@ -63,6 +76,14 @@ void ecriture(uint8_t pwm)
     }
 }
 
+/****************************************************************************
+ * Methode :    impulsionPwm()
+ * Description: Corrige un probléme  de l'ordre du hardware. Elle consite en
+ *              chauffer les roues juste après un make install.
+ * Paramètres:  Aucun
+ * Retour:      Aucun
+ ****************************************************************************/
+
 void impulsionPwm()
 {
     moteur.ajustementPwmNavigation(IMPULSE_DROITE, IMPULSE_GAUCHE);
@@ -70,18 +91,58 @@ void impulsionPwm()
     ecriture(IMPULSE_DROITE);
     ecriture(IMPULSE_GAUCHE);
 }
+
+/****************************************************************************
+ * Fonction:    lumiereDroite()
+ * Description: retourne une valeur selon l'intensité lumineuse détectée par
+                la photoresistance du côté droit du bread board branché au
+                PORTA3
+ * Paramètres:  Aucun
+ * Retour:      uint16_t
+ ****************************************************************************/
+
 uint16_t lumiereDroite()
 {
     return ((capteur.lecture(3) >> 2) + PRECISION); //photoresistance de droite lumiere.lecture(4)
 }
+
+/****************************************************************************
+ * Fonction:    lumiereGauche()
+ * Description: retourne une valeur selon l'intensité lumineuse détectée par
+                la photoresistance du côté gauche du bread board branché au
+                PORTA4 (l'intensité détectée et la valeur de retour sont
+                proportionelles).
+ * Paramètres:  Aucun
+ * Retour:      uint16_t
+ ****************************************************************************/
+
+
 uint16_t lumiereGauche()
 {
     return (capteur.lecture(4) >> 2); //photoresistance de gauche lumiere.lecture(1)
 }
+
+
+/****************************************************************************
+ * Fonction:    obstacle()
+ * Description: retourne une valeur selon la distance détectée par le capteur
+                IR entre le robot et le mur (la distance détectée  et la 
+                valeur de retour sont proportionelles).
+ * Paramètres:  Aucun
+ * Retour:      uint16_t
+ ****************************************************************************/
 uint16_t obstacle()
 {
     return capteur.lecture(7);
 }
+
+
+/****************************************************************************
+ * Fonction:    initialisation()
+ * Description: Initialise les ports en mode entrée.
+ * Paramètres:  Aucun
+ * Retour:      Aucun
+ ****************************************************************************/
 
 void initialisation()
 {
@@ -90,6 +151,14 @@ void initialisation()
     DDRB |= 0xff;
     DDRA |= 0x00;
 }
+
+
+/****************************************************************************
+ * Fonction:    debutParcours()
+ * Description: Lance routine qui initie le mode parcours.
+ * Paramètres:  Aucun
+ * Retour:      Aucun
+ ****************************************************************************/
 
 void debutParcours()
 {
@@ -102,6 +171,15 @@ void debutParcours()
     }
     instruction = Mode::SUIVRE_MUR;
 }
+
+/****************************************************************************
+ * Fonction:    suivreMur()
+ * Description: Permet de suivre le mur à 20 cm de celui-ci grâce à la
+                méthode obstacle(). La del s'allume en fonction de la
+                distance avec le mur.
+ * Paramètres:  Aucun
+ * Retour:      Aucun
+ ****************************************************************************/
 
 void suivreMur()
 {
@@ -137,6 +215,16 @@ void suivreMur()
     }
 }
 
+/****************************************************************************
+ * Fonction:    attendre()
+ * Description: Attend signal de l'évaluateur une fois le robot ne detecte 
+                plus de mur ( à l’intermédiaire  entre les 2 portions de mur )
+                pour éventuellement changer de mode.
+ * Paramètres:  Aucun
+ * Retour:      Aucun
+ ****************************************************************************/
+
+
 void attendre()
 {
     signal = false;
@@ -160,6 +248,17 @@ void attendre()
         }
     }
 }
+
+
+/****************************************************************************
+ * Fonction:    suivreLumiere()
+ * Description: Permet au robot de se déplacer grâce à l'intensité lumineuse
+                perçue par les photoresistances à l'aide des methodes
+                lumiereGauche() et lumiereDroite().
+ * Paramètres:  Aucun
+ * Retour:      Aucun
+ ****************************************************************************/
+
 void suivreLumiere()
 {
     Print impr;
@@ -184,6 +283,15 @@ void suivreLumiere()
         instruction = Mode::SUIVRE_MUR;
     }
 }
+
+
+/****************************************************************************
+ * Fonction:    demiTour()
+ * Description: Permet au robot de faire un demi-tour.
+ * Paramètres:  Aucun
+ * Retour:      Aucun
+ ****************************************************************************/
+
 void demiTour()
 {
     //AJUSTEMENRPWM AVEC VALEUR ET DELAY DU TEST
@@ -196,6 +304,14 @@ void demiTour()
     enregistrement = false;
     instruction = Mode::SUIVRE_MUR;
 }
+
+/****************************************************************************
+ * Fonction:    modeReprise()
+ * Description: Permet au robot de suivre le parcours grace aux instructions 
+                gardées en mémoire.
+ * Paramètres:  Aucun
+ * Retour:      Aucun
+ ****************************************************************************/
 
 void modeReprise()
 {
@@ -216,6 +332,15 @@ void modeReprise()
     instruction = Mode::FIN_PARCOURS;
 }
 
+/****************************************************************************
+ * Fonction:    fin()
+ * Description: Permet de laisser le temps à la memoire externe d'enregistrer 
+                la première moitié du parcours et attends le signal de 
+                l'évaluateur pour passer en mode reprise ou mode parcours.
+ * Paramètres:  Aucun
+ * Retour:      Aucun
+ ****************************************************************************/
+
 void fin()
 {
     if (bouton.appuiBouton(PD5)) // Debut mode reprise
@@ -228,6 +353,13 @@ void fin()
         del.clignoter(15, LUMIERE_VERTE);
     }
 }
+
+/****************************************************************************
+ * Fonction:    faireParcours()
+ * Description: Switch case du mode parcours.
+ * Paramètres:  Aucun
+ * Retour:      Aucun
+ ****************************************************************************/
 
 void faireParcours()
 {
@@ -269,6 +401,7 @@ void faireParcours()
         }
     }
 }
+
 int main()
 {
     Print pr ;
