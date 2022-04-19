@@ -12,6 +12,7 @@
 #include <bouton.h>
 #include <can.h>
 #define UNE_SECONDE 1000
+
 enum class Mode
 {
     DEBUT_PARCOURS,
@@ -21,6 +22,7 @@ enum class Mode
     SUIVI_LUMIERE,
     FIN_PARCOURS
 };
+
 Mode instruction = Mode::DEBUT_PARCOURS;
 Moteur moteur(PB5, PB6);
 Bouton bouton;
@@ -28,6 +30,7 @@ can capteur;
 Del del;
 Print print;
 Memoire24CXXX memoireExterne;
+
 const uint16_t AJUSTEMENT_DROIT = 145;
 const uint16_t AJUSTEMENT_GAUCHE = 110;
 const uint16_t DEMITOUR_DROIT = 100;
@@ -87,6 +90,7 @@ void initialisation()
     DDRB |= 0xff;
     DDRA |= 0x00;
 }
+
 void debutParcours()
 {
     del.clignoter(15, LUMIERE_VERTE);
@@ -98,6 +102,7 @@ void debutParcours()
     }
     instruction = Mode::SUIVRE_MUR;
 }
+
 void suivreMur()
 {
     mur = true;
@@ -131,6 +136,7 @@ void suivreMur()
         }
     }
 }
+
 void attendre()
 {
     signal = false;
@@ -142,40 +148,37 @@ void attendre()
             instruction = Mode::SUIVI_LUMIERE;
             signal = !signal;
         }
-        if (bouton.appuiBouton(PC0)) // Mode Fin Parcours
+        if (bouton.appuiBouton(PD2)) // Mode Fin Parcours
         {
             instruction = Mode::FIN_PARCOURS;
             signal = !signal;
         }
-        if (bouton.appuiBouton(PC2))
-            m.lecture(i++, &pwmDroite);
-        _delay_ms(5); // BOUTON BLANC MODE TOURNER
+        if (bouton.appuiBouton(PD5)) // BOUTON BLANC MODE TOURNER
         {
-            instr UBRR0H = 0;
-            UBRR0L = 0xCF;
-
-            UCSR0A = 0;
-            UCSR0B |= (1 << RXEN0) | (1 << TXEN0);
-
-            UCSR0C |= (1 << UCSZ11) | (1 << UCSZ10);
-            uction = Mode::MODE_TOURNER;
+            instruction = Mode::MODE_TOURNER;
             signal = !signal;
         }
     }
 }
 void suivreLumiere()
 {
-    uint16_t gauche = lumiereGauche();
-    uint16_t droite = lumiereDroite();
+    Print impr;
+    uint8_t gauche = lumiereGauche();
+    uint8_t droite = lumiereDroite();
+    impulsionPwm();
     while (lumiereDroite() > LUMIERE_FORTE || lumiereGauche() > LUMIERE_FORTE)
     {
+        
         moteur.ajustementPwmNavigation(gauche, droite);
         ecriture(gauche);
         ecriture(droite);
+        impr.afficherEntier8bit(gauche);
+        impr.afficherChaineCaractere("-");
+        impr.afficherEntier8bit(droite);
     }
     moteur.ajustementPwmNavigation(ARRET, ARRET);
-    ecriture(ARRET);
-    ecriture(ARRET);
+    // ecriture(ARRET);
+    // ecriture(ARRET);
     if (obstacle() > TROP_PROCHE)
     {
         instruction = Mode::SUIVRE_MUR;
@@ -193,33 +196,39 @@ void demiTour()
     enregistrement = false;
     instruction = Mode::SUIVRE_MUR;
 }
+
+void modeReprise()
+{
+    Print print;
+    del.clignoter(15, LUMIERE_ROUGE);
+    uint8_t pwmDroite = 0;
+    uint8_t pwmGauche = 0;
+    for (int i = 0; i < adresseMemoire;)
+    {
+        memoireExterne.lecture(i++, &pwmDroite);
+        _delay_ms(5);
+        memoireExterne.lecture(i++, &pwmGauche);
+        _delay_ms(5);
+        moteur.ajustementPwmNavigation(pwmDroite, pwmGauche);
+        print.afficherEntier8bit(pwmDroite);
+        print.afficherEntier8bit(pwmGauche);
+    }
+    instruction = Mode::FIN_PARCOURS;
+}
+
 void fin()
 {
-    if (bouton.appuiBouton(PC0)) // Debut mode reprise
+    if (bouton.appuiBouton(PD5)) // Debut mode reprise
     {
-        del.clignoter(15, LUMIERE_ROUGE);
         modeReprise();
     }
-    if (bouton.appuiBouton(PC2)) // Debut mode parcours
+    if (bouton.appuiBouton(PD2)) // Debut mode parcours
     {
         instruction = Mode::DEBUT_PARCOURS;
         del.clignoter(15, LUMIERE_VERTE);
     }
 }
-void modeReprise()
-{
-    uint8_t pwmDroite = 0;
-    uint8_t pwmGauche = 0;
-    for (int i = 0; i < adresseMemoire;)
-    {
-        m.lecture(i++, &pwmDroite);
-        _delay_ms(5);
-        m.lecture(i++, &pwmGauche);
-        _delay_ms(5);
-        moteur.ajustementPwmNavigation(pwmDroite, pwmGauche);
-    }
-    instruction = Mode::FIN_PARCOURS;
-}
+
 void faireParcours()
 {
     Print p;
@@ -229,8 +238,9 @@ void faireParcours()
         switch (instruction)
         {
         case Mode::DEBUT_PARCOURS:
-            debutParcours();
+            impulsionPwm();
             p.afficherChaineCaractere("debut parcours--");
+            debutParcours();
             break;
         case Mode::SUIVRE_MUR:
             p.afficherChaineCaractere("suivre mur--");
@@ -242,7 +252,7 @@ void faireParcours()
             attendre();
             break;
         case Mode::SUIVI_LUMIERE:
-            p.afficherChaineCaractere("suivre lumiere--");
+//            p.afficherChaineCaractere("suivre lumiere--");
             suivreLumiere();
             break;
         case Mode::MODE_TOURNER:
@@ -261,15 +271,20 @@ void faireParcours()
 }
 int main()
 {
+    Print pr ;
     initialisation();
     while (true)
     {
-        if (bouton.appuiBouton(PC0))
+        if (bouton.appuiBouton(PD2))
         {
+             pr.afficherChaineCaractere("interrupt");
             faireParcours();
         }
-        if (bouton.appuiBouton(PC2))
+        if (bouton.appuiBouton(PD5))
         {
+        pr.afficherChaineCaractere("boton-");
+
+
             modeReprise();
         }
     }
