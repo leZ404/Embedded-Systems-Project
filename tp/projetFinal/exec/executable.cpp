@@ -45,7 +45,7 @@ Memoire24CXXX memoireExterne;
 
 const uint16_t AJUSTEMENT_DROIT = 200;
 const uint16_t AJUSTEMENT_GAUCHE = 115;
-const uint16_t DEMITOUR_DROIT = 115;
+const uint16_t DEMITOUR_DROIT = 130;
 const uint16_t DEMITOUR_GAUCHE = 170;
 const uint16_t AVANCER_DROIT = 120;
 const uint16_t AVANCER_GAUCHE = 110;
@@ -287,7 +287,8 @@ void demiTour()
         moteur.ajustementPwmNavigation(DEMITOUR_DROIT, DEMITOUR_GAUCHE);
     } while (obstacle() < TROP_PROCHE);
     moteur.ajustementPwmNavigation(DEMITOUR_DROIT, DEMITOUR_GAUCHE);
-    _delay_ms(500);
+    _delay_ms(1000);
+    moteur.ajustementPwmNavigation(AVANCER_DROIT,AVANCER_GAUCHE);
     enregistrement = false;
     instruction = Mode::SUIVRE_MUR;
 }
