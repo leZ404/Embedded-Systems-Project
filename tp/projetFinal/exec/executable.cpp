@@ -1,3 +1,12 @@
+/****************************************************************************
+ * Travail : PROJET FINAL
+Section # : 02
+Équipe # : EQUIPE_NO 3544
+Auteurs : Ryan Lahbabi , Zied Kaabi, Ashveer Golam, Omar Bamrim
+Correcteur : Jerome Collin  .
+Nom du robot : GOAT
+ ****************************************************************************/
+
 #define F_CPU 8000000UL
 #include <stdlib.h>
 #include <print.h>
@@ -11,11 +20,9 @@
 #include <DEL.h>
 #include <bouton.h>
 #include <can.h>
-#define UNE_SECONDE 1000
 
 enum class Mode
 {
-    DEBUT_PARCOURS,
     SUIVRE_MUR,
     ATTENTE,
     MODE_TOURNER,
@@ -23,7 +30,8 @@ enum class Mode
     FIN_PARCOURS
 };
 
-Mode instruction = Mode::DEBUT_PARCOURS;
+Mode instruction = Mode::SUIVRE_MUR;
+
 /****************************************************************************
  * Declaration des instances et constantes .
  ****************************************************************************/
@@ -35,22 +43,28 @@ Del del;
 Print print;
 Memoire24CXXX memoireExterne;
 
-const uint16_t AJUSTEMENT_DROIT = 145;
-const uint16_t AJUSTEMENT_GAUCHE = 110;
-const uint16_t DEMITOUR_DROIT = 100;
-const uint16_t DEMITOUR_GAUCHE = 155;
-const uint16_t AVANCER_DROIT = 110;
+const uint16_t AJUSTEMENT_DROIT = 200;
+const uint16_t AJUSTEMENT_GAUCHE = 115;
+const uint16_t DEMITOUR_DROIT = 115;
+const uint16_t DEMITOUR_GAUCHE = 170;
+const uint16_t AVANCER_DROIT = 120;
 const uint16_t AVANCER_GAUCHE = 110;
-const uint16_t DISTANCE_20CM = 350;
-const uint16_t TROP_PROCHE = 400;
+const uint16_t DISTANCE_MUR = 300;
+const uint16_t TROP_PROCHE = 350;
 const uint16_t ABSENCE_MUR = 170;
-const uint16_t LUMIERE_FORTE = 180;
-const uint8_t DELAY_MEMOIRE = 5;
+const uint16_t LUMIERE_FORTE = 190;
+const uint8_t DELAIS_MEMOIRE = 5;
 const uint8_t ARRET = 0;
 const uint8_t PRECISION = 5;
-const uint8_t IMPULSE_GAUCHE = 200;
-const uint8_t IMPULSE_DROITE = 200;
+const uint8_t IMPULSE_GAUCHE = 250;
+const uint8_t IMPULSE_DROITE = 250;
 const uint8_t DELAY_IMPULSION = 200;
+const uint16_t DEUX_SECONDE = 2000;
+
+const uint8_t AVANCE = 10;
+const uint8_t DROITE = 20;
+const uint8_t GAUCHE = 30;
+const uint8_t PULSE = 40;
 
 uint8_t adresseMemoire = 0;
 uint8_t adresseParcours = 0;
@@ -66,13 +80,13 @@ bool signal = false;
  * Retour:      Aucun
  ****************************************************************************/
 
-
-void ecriture(uint8_t pwm)
+void ecriture(uint8_t inst)
 {
     if (enregistrement)
     {
-        memoireExterne.ecriture(adresseMemoire++, pwm);
-        _delay_ms(5);
+        memoireExterne.ecriture(adresseMemoire, inst);
+        _delay_ms(DELAIS_MEMOIRE);
+        adresseMemoire++;
     }
 }
 
@@ -88,8 +102,7 @@ void impulsionPwm()
 {
     moteur.ajustementPwmNavigation(IMPULSE_DROITE, IMPULSE_GAUCHE);
     _delay_ms(DELAY_IMPULSION);
-    ecriture(IMPULSE_DROITE);
-    ecriture(IMPULSE_GAUCHE);
+    ecriture(PULSE);
 }
 
 /****************************************************************************
@@ -103,7 +116,7 @@ void impulsionPwm()
 
 uint16_t lumiereDroite()
 {
-    return ((capteur.lecture(3) >> 2) + PRECISION); //photoresistance de droite lumiere.lecture(4)
+    return ((capteur.lecture(3) >> 2) + PRECISION);
 }
 
 /****************************************************************************
@@ -116,17 +129,15 @@ uint16_t lumiereDroite()
  * Retour:      uint16_t
  ****************************************************************************/
 
-
 uint16_t lumiereGauche()
 {
-    return (capteur.lecture(4) >> 2); //photoresistance de gauche lumiere.lecture(1)
+    return (capteur.lecture(4) >> 2);
 }
-
 
 /****************************************************************************
  * Fonction:    obstacle()
  * Description: retourne une valeur selon la distance détectée par le capteur
-                IR entre le robot et le mur (la distance détectée  et la 
+                IR entre le robot et le mur (la distance détectée  et la
                 valeur de retour sont proportionelles).
  * Paramètres:  Aucun
  * Retour:      uint16_t
@@ -135,7 +146,6 @@ uint16_t obstacle()
 {
     return capteur.lecture(7);
 }
-
 
 /****************************************************************************
  * Fonction:    initialisation()
@@ -152,26 +162,6 @@ void initialisation()
     DDRA |= 0x00;
 }
 
-
-/****************************************************************************
- * Fonction:    debutParcours()
- * Description: Lance routine qui initie le mode parcours.
- * Paramètres:  Aucun
- * Retour:      Aucun
- ****************************************************************************/
-
-void debutParcours()
-{
-    del.clignoter(15, LUMIERE_VERTE);
-    while (obstacle() < ABSENCE_MUR)
-    {
-        moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE);
-        ecriture(AVANCER_DROIT);
-        ecriture(AVANCER_GAUCHE);
-    }
-    instruction = Mode::SUIVRE_MUR;
-}
-
 /****************************************************************************
  * Fonction:    suivreMur()
  * Description: Permet de suivre le mur à 20 cm de celui-ci grâce à la
@@ -179,37 +169,41 @@ void debutParcours()
                 distance avec le mur.
  * Paramètres:  Aucun
  * Retour:      Aucun
+ * Note: Nous n'utilisons pas de fonction des fonctions pour les while pour
+         des raisons materielles.
  ****************************************************************************/
 
 void suivreMur()
 {
+
     mur = true;
     while (mur)
     {
-        while (obstacle() > DISTANCE_20CM && obstacle() < TROP_PROCHE)
+
+        while (obstacle() > DISTANCE_MUR && obstacle() < TROP_PROCHE)
         {
+
             moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE);
-            ecriture(AVANCER_DROIT);
-            ecriture(AVANCER_GAUCHE);
+            ecriture(AVANCE);
         }
         while (obstacle() > TROP_PROCHE)
         {
+
             moteur.ajustementPwmNavigation(AJUSTEMENT_DROIT, AJUSTEMENT_GAUCHE);
-            ecriture(AJUSTEMENT_DROIT);
-            ecriture(AJUSTEMENT_GAUCHE);
+            ecriture(GAUCHE);
         }
-        while (obstacle() < DISTANCE_20CM && obstacle() > ABSENCE_MUR)
+        while (obstacle() < DISTANCE_MUR && obstacle() > ABSENCE_MUR)
         {
+
             moteur.ajustementPwmNavigation(AJUSTEMENT_GAUCHE, AJUSTEMENT_DROIT);
-            ecriture(AJUSTEMENT_GAUCHE);
-            ecriture(AJUSTEMENT_DROIT);
+            ecriture(DROITE);
         }
+
         if (obstacle() < ABSENCE_MUR)
         {
+
             moteur.ajustementPwmNavigation(ARRET, ARRET);
-            ecriture(ARRET);
-            ecriture(ARRET);
-            mur = !mur;
+            mur = false;
             instruction = Mode::ATTENTE;
         }
     }
@@ -217,38 +211,36 @@ void suivreMur()
 
 /****************************************************************************
  * Fonction:    attendre()
- * Description: Attend signal de l'évaluateur une fois le robot ne detecte 
+ * Description: Attend signal de l'évaluateur une fois le robot ne detecte
                 plus de mur ( à l’intermédiaire  entre les 2 portions de mur )
                 pour éventuellement changer de mode.
  * Paramètres:  Aucun
  * Retour:      Aucun
  ****************************************************************************/
 
-
 void attendre()
 {
     signal = false;
     while (!signal)
     {
-        if ((lumiereDroite() > LUMIERE_FORTE) || (lumiereGauche() > LUMIERE_FORTE)) // Mode Suivi Lumiere
+        if ((lumiereDroite() > LUMIERE_FORTE) || (lumiereGauche() > LUMIERE_FORTE))
         {
-            // METTRE CONDITION POUR DIFFERENTIER DROITE OU GAUCHE DANS LECRITURE
+
             instruction = Mode::SUIVI_LUMIERE;
-            signal = !signal;
+            signal = true;
         }
-        if (bouton.appuiBouton(PD2)) // Mode Fin Parcours
+        if (bouton.appuiBouton(PD2))
         {
             instruction = Mode::FIN_PARCOURS;
-            signal = !signal;
+            signal = true;
         }
-        if (bouton.appuiBouton(PD5)) // BOUTON BLANC MODE TOURNER
+        if (bouton.appuiBouton(PD7))
         {
             instruction = Mode::MODE_TOURNER;
-            signal = !signal;
+            signal = true;
         }
     }
 }
-
 
 /****************************************************************************
  * Fonction:    suivreLumiere()
@@ -261,29 +253,22 @@ void attendre()
 
 void suivreLumiere()
 {
-    Print impr;
+
     uint8_t gauche = lumiereGauche();
     uint8_t droite = lumiereDroite();
-    impulsionPwm();
+
     while (lumiereDroite() > LUMIERE_FORTE || lumiereGauche() > LUMIERE_FORTE)
     {
-        
+
         moteur.ajustementPwmNavigation(gauche, droite);
-        ecriture(gauche);
-        ecriture(droite);
-        impr.afficherEntier8bit(gauche);
-        impr.afficherChaineCaractere("-");
-        impr.afficherEntier8bit(droite);
+        ecriture(PULSE);
     }
     moteur.ajustementPwmNavigation(ARRET, ARRET);
-    // ecriture(ARRET);
-    // ecriture(ARRET);
     if (obstacle() > TROP_PROCHE)
     {
         instruction = Mode::SUIVRE_MUR;
     }
 }
-
 
 /****************************************************************************
  * Fonction:    demiTour()
@@ -294,20 +279,22 @@ void suivreLumiere()
 
 void demiTour()
 {
-    //AJUSTEMENRPWM AVEC VALEUR ET DELAY DU TEST
 
-    while ((obstacle() <= DISTANCE_20CM))
+    impulsionPwm();
+    do
     {
         del.ambrer();
         moteur.ajustementPwmNavigation(DEMITOUR_DROIT, DEMITOUR_GAUCHE);
-    }
+    } while (obstacle() < TROP_PROCHE);
+    moteur.ajustementPwmNavigation(DEMITOUR_DROIT, DEMITOUR_GAUCHE);
+    _delay_ms(500);
     enregistrement = false;
     instruction = Mode::SUIVRE_MUR;
 }
 
 /****************************************************************************
  * Fonction:    modeReprise()
- * Description: Permet au robot de suivre le parcours grace aux instructions 
+ * Description: Permet au robot de suivre le parcours grace aux instructions
                 gardées en mémoire.
  * Paramètres:  Aucun
  * Retour:      Aucun
@@ -315,27 +302,50 @@ void demiTour()
 
 void modeReprise()
 {
-    Print print;
+
     del.clignoter(15, LUMIERE_ROUGE);
-    uint8_t pwmDroite = 0;
-    uint8_t pwmGauche = 0;
-    for (int i = 0; i < adresseMemoire;)
+    uint8_t instruc = 0;
+    impulsionPwm();
+
+    while (adresseParcours < adresseMemoire)
     {
-        memoireExterne.lecture(i++, &pwmDroite);
-        _delay_ms(5);
-        memoireExterne.lecture(i++, &pwmGauche);
-        _delay_ms(5);
-        moteur.ajustementPwmNavigation(pwmDroite, pwmGauche);
-        print.afficherEntier8bit(pwmDroite);
-        print.afficherEntier8bit(pwmGauche);
+
+        memoireExterne.lecture(adresseParcours, &instruc);
+
+        adresseParcours++;
+
+        if (instruc == AVANCE)
+        {
+            moteur.ajustementPwmNavigation(AVANCER_DROIT, AVANCER_GAUCHE);
+        }
+
+        else if (instruc == GAUCHE)
+        {
+            moteur.ajustementPwmNavigation(AJUSTEMENT_DROIT, AJUSTEMENT_GAUCHE);
+        }
+
+        else if (instruc == DROITE)
+        {
+            moteur.ajustementPwmNavigation(AJUSTEMENT_GAUCHE, AJUSTEMENT_DROIT);
+        }
+        else if (instruc == PULSE)
+        {
+            moteur.ajustementPwmNavigation(IMPULSE_DROITE, IMPULSE_GAUCHE);
+        }
+
+        _delay_ms(57);
     }
+
     instruction = Mode::FIN_PARCOURS;
+    moteur.ajustementPwmNavigation(ARRET, ARRET);
+    del.SetCouleurLumiere(Etat::VERT);
+    _delay_ms(DEUX_SECONDE);
 }
 
 /****************************************************************************
  * Fonction:    fin()
- * Description: Permet de laisser le temps à la memoire externe d'enregistrer 
-                la première moitié du parcours et attends le signal de 
+ * Description: Permet de laisser le temps à la memoire externe d'enregistrer
+                la première moitié du parcours et attends le signal de
                 l'évaluateur pour passer en mode reprise ou mode parcours.
  * Paramètres:  Aucun
  * Retour:      Aucun
@@ -343,14 +353,19 @@ void modeReprise()
 
 void fin()
 {
-    if (bouton.appuiBouton(PD5)) // Debut mode reprise
+    del.SetCouleurLumiere(Etat::ROUGE);
+    _delay_ms(DEUX_SECONDE);
+    del.SetCouleurLumiere(Etat::VERT);
+    _delay_ms(DEUX_SECONDE);
+    if (bouton.appuiBouton(PD7))
     {
+        impulsionPwm();
         modeReprise();
     }
-    if (bouton.appuiBouton(PD2)) // Debut mode parcours
+    if (bouton.appuiBouton(PD2))
     {
-        instruction = Mode::DEBUT_PARCOURS;
         del.clignoter(15, LUMIERE_VERTE);
+        instruction = Mode::SUIVRE_MUR;
     }
 }
 
@@ -363,40 +378,33 @@ void fin()
 
 void faireParcours()
 {
-    Print p;
+
     bool finParcours = false;
     while (!finParcours)
     {
         switch (instruction)
         {
-        case Mode::DEBUT_PARCOURS:
-            impulsionPwm();
-            p.afficherChaineCaractere("debut parcours--");
-            debutParcours();
-            break;
         case Mode::SUIVRE_MUR:
-            p.afficherChaineCaractere("suivre mur--");
             impulsionPwm();
             suivreMur();
             break;
+
         case Mode::ATTENTE:
-            p.afficherChaineCaractere("attendre--");
             attendre();
             break;
+
         case Mode::SUIVI_LUMIERE:
-//            p.afficherChaineCaractere("suivre lumiere--");
             suivreLumiere();
             break;
+
         case Mode::MODE_TOURNER:
             impulsionPwm();
-            p.afficherChaineCaractere("demitour--");
             demiTour();
-            p.afficherChaineCaractere("demitour-fait");
             break;
+
         case Mode::FIN_PARCOURS:
             fin();
-            finParcours = !finParcours;
-            p.afficherChaineCaractere("finParcours--");
+            finParcours = true;
             break;
         }
     }
@@ -404,20 +412,17 @@ void faireParcours()
 
 int main()
 {
-    Print pr ;
+
     initialisation();
     while (true)
     {
         if (bouton.appuiBouton(PD2))
         {
-             pr.afficherChaineCaractere("interrupt");
+            del.clignoter(15, LUMIERE_VERTE);
             faireParcours();
         }
-        if (bouton.appuiBouton(PD5))
+        if (bouton.appuiBouton(PD7))
         {
-        pr.afficherChaineCaractere("boton-");
-
-
             modeReprise();
         }
     }
