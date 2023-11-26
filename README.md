@@ -9,25 +9,25 @@ This project was designed as part of the embedded systems integrator project for
 To use this robot, you need to follow these six instructions:
 
 1. **Clean the library:** 
-   - In the `project/lib` folder, use the command:
+   - In the `project/Application/lib` folder, use the command:
      ```
      make clean
      ```
 
 2. **Compile the library:** 
-   - In the `project/lib` folder, use the command:
+   - In the `project/Application/lib` folder, use the command:
      ```
      make
      ```
 
 3. **Clean the app folder:** 
-   - In the `project/app` folder, use the command:
+   - In the `project/Application/app` folder, use the command:
      ```
      make clean
      ```
 
 4. **Compile and install the executable on the robot:** 
-   - In the `project/app` folder, use the command:
+   - In the `project/Application/app` folder, use the command:
      ```
      make install
      ```
